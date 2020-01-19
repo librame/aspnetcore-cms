@@ -26,12 +26,10 @@ namespace Librame.AspNetCore.Portal
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TSubject">指定的专题类型。</typeparam>
     /// <typeparam name="TSubjectBody">指定的专题主体类型。</typeparam>
-    /// <typeparam name="TSubjectClaim">指定的专题声明类型。</typeparam>
-    public interface ISubjectStore<out TAccessor, TSubject, TSubjectBody, TSubjectClaim> : IStore<TAccessor>
+    public interface ISubjectStore<out TAccessor, TSubject, TSubjectBody> : IStore<TAccessor>
         where TAccessor : IAccessor
         where TSubject : class
         where TSubjectBody : class
-        where TSubjectClaim : class
     {
 
         #region Subject
@@ -171,81 +169,81 @@ namespace Librame.AspNetCore.Portal
         #endregion
 
 
-        #region SubjectClaim
+        //#region SubjectClaim
 
-        /// <summary>
-        /// 异步包含指定专题声明。
-        /// </summary>
-        /// <param name="subjectId">给定的专题标识。</param>
-        /// <param name="claimId">给定的声明标识。</param>
-        /// <param name="assocId">给定的关联标识。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含布尔值的异步操作。</returns>
-        Task<bool> ContainTenantAsync(object subjectId, object claimId, string assocId, CancellationToken cancellationToken = default);
+        ///// <summary>
+        ///// 异步包含指定专题声明。
+        ///// </summary>
+        ///// <param name="subjectId">给定的专题标识。</param>
+        ///// <param name="claimId">给定的声明标识。</param>
+        ///// <param name="assocId">给定的关联标识。</param>
+        ///// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        ///// <returns>返回一个包含布尔值的异步操作。</returns>
+        //Task<bool> ContainTenantAsync(object subjectId, object claimId, string assocId, CancellationToken cancellationToken = default);
 
-        /// <summary>
-        /// 异步获取指定专题声明。
-        /// </summary>
-        /// <param name="subjectId">给定的专题标识。</param>
-        /// <param name="claimId">给定的声明标识。</param>
-        /// <param name="assocId">给定的关联标识。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <typeparamref name="TSubjectClaim"/> 的异步操作。</returns>
-        Task<TSubjectClaim> GetSubjectClaimAsync(object subjectId, object claimId, string assocId, CancellationToken cancellationToken = default);
+        ///// <summary>
+        ///// 异步获取指定专题声明。
+        ///// </summary>
+        ///// <param name="subjectId">给定的专题标识。</param>
+        ///// <param name="claimId">给定的声明标识。</param>
+        ///// <param name="assocId">给定的关联标识。</param>
+        ///// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        ///// <returns>返回一个包含 <typeparamref name="TSubjectClaim"/> 的异步操作。</returns>
+        //Task<TSubjectClaim> GetSubjectClaimAsync(object subjectId, object claimId, string assocId, CancellationToken cancellationToken = default);
 
-        /// <summary>
-        /// 异步查找指定专题声明。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="keyValues">给定的键值对数组或标识。</param>
-        /// <returns>返回一个包含 <typeparamref name="TSubjectClaim"/> 的异步操作。</returns>
-        Task<TSubjectClaim> FindSubjectClaimAsync(CancellationToken cancellationToken, params object[] keyValues);
+        ///// <summary>
+        ///// 异步查找指定专题声明。
+        ///// </summary>
+        ///// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        ///// <param name="keyValues">给定的键值对数组或标识。</param>
+        ///// <returns>返回一个包含 <typeparamref name="TSubjectClaim"/> 的异步操作。</returns>
+        //Task<TSubjectClaim> FindSubjectClaimAsync(CancellationToken cancellationToken, params object[] keyValues);
 
-        /// <summary>
-        /// 异步获取所有专题声明集合。
-        /// </summary>
-        /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="List{TSubjectClaim}"/> 的异步操作。</returns>
-        Task<List<TSubjectClaim>> GetAllSubjectClaimsAsync(Func<IQueryable<TSubjectClaim>, IQueryable<TSubjectClaim>> queryFactory = null,
-            CancellationToken cancellationToken = default);
+        ///// <summary>
+        ///// 异步获取所有专题声明集合。
+        ///// </summary>
+        ///// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
+        ///// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        ///// <returns>返回一个包含 <see cref="List{TSubjectClaim}"/> 的异步操作。</returns>
+        //Task<List<TSubjectClaim>> GetAllSubjectClaimsAsync(Func<IQueryable<TSubjectClaim>, IQueryable<TSubjectClaim>> queryFactory = null,
+        //    CancellationToken cancellationToken = default);
 
-        /// <summary>
-        /// 异步获取分页专题声明集合。
-        /// </summary>
-        /// <param name="index">给定的页索引。</param>
-        /// <param name="size">给定的页大小。</param>
-        /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="IPageable{TSubjectClaim}"/> 的异步操作。</returns>
-        Task<IPageable<TSubjectClaim>> GetPagingSubjectClaimsAsync(int index, int size,
-            Func<IQueryable<TSubjectClaim>, IQueryable<TSubjectClaim>> queryFactory = null,
-            CancellationToken cancellationToken = default);
+        ///// <summary>
+        ///// 异步获取分页专题声明集合。
+        ///// </summary>
+        ///// <param name="index">给定的页索引。</param>
+        ///// <param name="size">给定的页大小。</param>
+        ///// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
+        ///// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        ///// <returns>返回一个包含 <see cref="IPageable{TSubjectClaim}"/> 的异步操作。</returns>
+        //Task<IPageable<TSubjectClaim>> GetPagingSubjectClaimsAsync(int index, int size,
+        //    Func<IQueryable<TSubjectClaim>, IQueryable<TSubjectClaim>> queryFactory = null,
+        //    CancellationToken cancellationToken = default);
 
 
-        /// <summary>
-        /// 尝试异步创建专题声明集合。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="subjectClaims">给定的 <typeparamref name="TSubjectClaim"/> 数组。</param>
-        /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
-        Task<EntityResult> TryCreateAsync(CancellationToken cancellationToken, params TSubjectClaim[] subjectClaims);
+        ///// <summary>
+        ///// 尝试异步创建专题声明集合。
+        ///// </summary>
+        ///// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        ///// <param name="subjectClaims">给定的 <typeparamref name="TSubjectClaim"/> 数组。</param>
+        ///// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
+        //Task<EntityResult> TryCreateAsync(CancellationToken cancellationToken, params TSubjectClaim[] subjectClaims);
 
-        /// <summary>
-        /// 尝试更新专题声明集合。
-        /// </summary>
-        /// <param name="subjectClaims">给定的 <typeparamref name="TSubjectClaim"/> 数组。</param>
-        /// <returns>返回 <see cref="EntityResult"/>。</returns>
-        EntityResult TryUpdate(params TSubjectClaim[] subjectClaims);
+        ///// <summary>
+        ///// 尝试更新专题声明集合。
+        ///// </summary>
+        ///// <param name="subjectClaims">给定的 <typeparamref name="TSubjectClaim"/> 数组。</param>
+        ///// <returns>返回 <see cref="EntityResult"/>。</returns>
+        //EntityResult TryUpdate(params TSubjectClaim[] subjectClaims);
 
-        /// <summary>
-        /// 尝试删除专题声明集合。
-        /// </summary>
-        /// <param name="subjectClaims">给定的 <typeparamref name="TSubjectClaim"/> 数组。</param>
-        /// <returns>返回 <see cref="EntityResult"/>。</returns>
-        EntityResult TryDelete(params TSubjectClaim[] subjectClaims);
+        ///// <summary>
+        ///// 尝试删除专题声明集合。
+        ///// </summary>
+        ///// <param name="subjectClaims">给定的 <typeparamref name="TSubjectClaim"/> 数组。</param>
+        ///// <returns>返回 <see cref="EntityResult"/>。</returns>
+        //EntityResult TryDelete(params TSubjectClaim[] subjectClaims);
 
-        #endregion
+        //#endregion
 
     }
 }

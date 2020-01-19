@@ -17,7 +17,7 @@ namespace Librame.AspNetCore.Library
     /// <summary>
     /// 文库构建器接口。
     /// </summary>
-    public interface ILibraryBuilder : IBuilder
+    public interface ILibraryBuilder : IExtensionBuilder
     {
     }
 }

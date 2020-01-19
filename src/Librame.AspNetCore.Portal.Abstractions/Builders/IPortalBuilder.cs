@@ -17,7 +17,7 @@ namespace Librame.AspNetCore.Portal
     /// <summary>
     /// 门户构建器接口。
     /// </summary>
-    public interface IPortalBuilder : IBuilder
+    public interface IPortalBuilder : IExtensionBuilder
     {
     }
 }

@@ -17,7 +17,7 @@ namespace Librame.AspNetCore.Gallery
     /// <summary>
     /// 图库构建器接口。
     /// </summary>
-    public interface IGalleryBuilder : IBuilder
+    public interface IGalleryBuilder : IExtensionBuilder
     {
     }
 }

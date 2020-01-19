@@ -122,6 +122,10 @@ namespace Librame.AspNetCore.Portal.Tests
                     new PortalSource("LibrameCoreRepository", "https://github.com/librame/LibrameCore")
                     {
                         CategoryId = weblinkCategoryId
+                    },
+                    new PortalSource("LibrameCoreCmsRepository", "https://github.com/librame/LibrameCore.Cms")
+                    {
+                        CategoryId = weblinkCategoryId
                     }
                 };
 

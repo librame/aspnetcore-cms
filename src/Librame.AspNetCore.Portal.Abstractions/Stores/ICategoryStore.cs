@@ -30,6 +30,12 @@ namespace Librame.AspNetCore.Portal
         where TCategory : class
     {
         /// <summary>
+        /// 分类查询。
+        /// </summary>
+        IQueryable<TCategory> Categories { get; }
+
+
+        /// <summary>
         /// 异步包含指定分类。
         /// </summary>
         /// <param name="parentId">给定的父标识。</param>
@@ -53,7 +59,7 @@ namespace Librame.AspNetCore.Portal
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="keyValues">给定的键值对数组或标识。</param>
         /// <returns>返回一个包含 <typeparamref name="TCategory"/> 的异步操作。</returns>
-        Task<TCategory> FindCategoryAsync(CancellationToken cancellationToken, params object[] keyValues);
+        ValueTask<TCategory> FindCategoryAsync(CancellationToken cancellationToken, params object[] keyValues);
 
         /// <summary>
         /// 异步获取所有分类集合。
@@ -72,7 +78,7 @@ namespace Librame.AspNetCore.Portal
         /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TCategory}"/> 的异步操作。</returns>
-        Task<IPageable<TCategory>> GetPagingCategoriesAsync(int index, int size,
+        ValueTask<IPageable<TCategory>> GetPagingCategoriesAsync(int index, int size,
             Func<IQueryable<TCategory>, IQueryable<TCategory>> queryFactory = null,
             CancellationToken cancellationToken = default);
 
@@ -84,6 +90,13 @@ namespace Librame.AspNetCore.Portal
         /// <param name="categories">给定的 <typeparamref name="TCategory"/> 数组。</param>
         /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
         Task<EntityResult> TryCreateAsync(CancellationToken cancellationToken, params TCategory[] categories);
+
+        /// <summary>
+        /// 尝试创建分类集合。
+        /// </summary>
+        /// <param name="categories">给定的 <typeparamref name="TCategory"/> 数组。</param>
+        /// <returns>返回 <see cref="EntityResult"/>。</returns>
+        EntityResult TryCreate(params TCategory[] categories);
 
         /// <summary>
         /// 尝试更新分类集合。
