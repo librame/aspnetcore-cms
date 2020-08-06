@@ -1,0 +1,51 @@
+@page "/categories"
+@inject ExampleStoreHub stores
+
+<h1>Categories</h1>
+
+<p>Test Categories List.</p>
+
+@if (categories == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>ParentId</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>CreatedTime</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in categories)
+            {
+            <tr>
+                <td>@category.Id</td>
+                <td>@GetParentName(category.ParentId)</td>
+                <td>@category.Name</td>
+                <td>@category.Description</td>
+                <td>@category.CreatedTime</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IReadOnlyList<ContentCategory<int, Guid>> categories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await stores.GetAllCategoriesAsync();
+    }
+
+    private string GetParentName(int parentId)
+    {
+        return parentId > 0 ? categories.First(p => p.Id == parentId).Name : "¸ù·ÖÀà";
+    }
+}
