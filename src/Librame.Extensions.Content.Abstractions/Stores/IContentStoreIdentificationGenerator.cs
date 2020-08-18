@@ -22,9 +22,15 @@ namespace Librame.Extensions.Content.Stores
     /// 内容存储标识生成器接口。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    public interface IContentStoreIdentityGenerator<TId> : IDataStoreIdentityGenerator<TId>
+    public interface IContentStoreIdentificationGenerator<TId> : IDataStoreIdentificationGenerator<TId>
         where TId : IEquatable<TId>
     {
+        /// <summary>
+        /// 生成单元标识。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TId"/>。</returns>
+        TId GenerateUnitId();
+
         /// <summary>
         /// 异步生成单元标识。
         /// </summary>

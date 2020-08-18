@@ -25,22 +25,29 @@ namespace Librame.Extensions.Content.Stores
     /// 抽象内容存储标识生成器。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    public abstract class AbstractContentStoreIdentityGenerator<TId>
-        : AbstractDataStoreIdentityGenerator<TId>, IContentStoreIdentityGenerator<TId>
+    public abstract class AbstractContentStoreIdentificationGenerator<TId>
+        : AbstractDataStoreIdentificationGenerator<TId>, IContentStoreIdentificationGenerator<TId>
         where TId : IEquatable<TId>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractContentStoreIdentityGenerator{TId}"/>。
+        /// 构造一个 <see cref="AbstractContentStoreIdentificationGenerator{TId}"/>。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="factory">给定的 <see cref="IIdentityGeneratorFactory"/>。</param>
+        /// <param name="factory">给定的 <see cref="IIdentificationGeneratorFactory"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected AbstractContentStoreIdentityGenerator(IClockService clock,
-            IIdentityGeneratorFactory factory, ILoggerFactory loggerFactory)
+        protected AbstractContentStoreIdentificationGenerator(IClockService clock,
+            IIdentificationGeneratorFactory factory, ILoggerFactory loggerFactory)
             : base(clock, factory, loggerFactory)
         {
         }
 
+
+        /// <summary>
+        /// 生成单元标识。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TId"/>。</returns>
+        public virtual TId GenerateUnitId()
+            => GenerateId<TId>("UnitId");
 
         /// <summary>
         /// 异步生成单元标识。

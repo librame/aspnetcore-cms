@@ -15,8 +15,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Librame.Extensions.Content.Stores
 {
-    using Data.Stores;
     using Content.Resources;
+    using Data.Stores;
 
     /// <summary>
     /// 内容单元标签。

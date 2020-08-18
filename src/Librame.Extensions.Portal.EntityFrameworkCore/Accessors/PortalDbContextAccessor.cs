@@ -15,13 +15,15 @@ using System;
 
 namespace Librame.Extensions.Portal.Accessors
 {
+    using Data;
     using Data.Accessors;
     using Portal.Stores;
 
     /// <summary>
     /// 门户数据库上下文访问器。
     /// </summary>
-    public class PortalDbContextAccessor : PortalDbContextAccessor<Guid, int, Guid, Guid>
+    public class PortalDbContextAccessor : PortalDbContextAccessor<Guid, int, Guid, Guid>,
+        IPortalAccessor, IDataAccessor
     {
         /// <summary>
         /// 构造一个门户数据库上下文访问器实例。
@@ -46,7 +48,8 @@ namespace Librame.Extensions.Portal.Accessors
         : PortalDbContextAccessor<
             PortalEditor<TGenId, TUserId, TCreatedBy>,
             PortalInternalUser<TGenId, TCreatedBy>,
-            TGenId, TIncremId, TUserId, TCreatedBy>
+            TGenId, TIncremId, TUserId, TCreatedBy>,
+            IDataAccessor<TGenId, TIncremId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TUserId : IEquatable<TUserId>
@@ -56,7 +59,7 @@ namespace Librame.Extensions.Portal.Accessors
         /// 构造一个门户数据库上下文访问器实例。
         /// </summary>
         /// <param name="options">给定的 <see cref="DbContextOptions"/>。</param>
-        public PortalDbContextAccessor(DbContextOptions options)
+        protected PortalDbContextAccessor(DbContextOptions options)
             : base(options)
         {
         }
@@ -74,8 +77,8 @@ namespace Librame.Extensions.Portal.Accessors
     /// <typeparam name="TUserId">指定的用户标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     public class PortalDbContextAccessor<TEditor, TInternalUser, TGenId, TIncremId, TUserId, TCreatedBy>
-        : DbContextAccessor<TGenId, TIncremId, TCreatedBy>,
-        IPortalDbContextAccessor<TEditor, TInternalUser>
+        : DataDbContextAccessor<TGenId, TIncremId, TCreatedBy>,
+            IPortalAccessor<TEditor, TInternalUser>
         where TEditor : PortalEditor<TGenId, TUserId, TCreatedBy>
         where TInternalUser : PortalInternalUser<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
@@ -87,7 +90,7 @@ namespace Librame.Extensions.Portal.Accessors
         /// 构造一个门户数据库上下文访问器实例。
         /// </summary>
         /// <param name="options">给定的 <see cref="DbContextOptions"/>。</param>
-        public PortalDbContextAccessor(DbContextOptions options)
+        protected PortalDbContextAccessor(DbContextOptions options)
             : base(options)
         {
         }
@@ -105,12 +108,25 @@ namespace Librame.Extensions.Portal.Accessors
 
 
         /// <summary>
-        /// 开始创建模型。
+        /// 编者数据集管理器。
+        /// </summary>
+        public DbSetManager<TEditor> EditorsManager
+            => Editors.AsManager();
+
+        /// <summary>
+        /// 内置用户数据集管理器。
+        /// </summary>
+        public DbSetManager<TInternalUser> InternalUsersManager
+            => InternalUsers.AsManager();
+
+
+        /// <summary>
+        /// 配置模型构建器核心。
         /// </summary>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreatingCore(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreatingCore(modelBuilder);
 
             modelBuilder.ConfigurePortalStores(this);
         }

@@ -27,7 +27,7 @@ namespace Librame.Extensions.Portal.Options
         public Dictionary<string, string> DefaultEditors { get; set; }
             = new Dictionary<string, string>
             {
-                { "试编", "测试编者" }
+                { "测编", "测试编者" }
             };
 
         /// <summary>

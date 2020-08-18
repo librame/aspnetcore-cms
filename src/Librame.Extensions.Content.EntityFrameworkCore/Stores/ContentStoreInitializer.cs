@@ -11,18 +11,83 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Librame.Extensions.Content.Stores
 {
     using Content.Accessors;
+    using Content.Builders;
     using Content.Options;
     using Data.Accessors;
     using Data.Stores;
     using Data.Validators;
+
+    /// <summary>
+    /// 内容存储初始化器。
+    /// </summary>
+    public class ContentStoreInitializer : ContentStoreInitializer<ContentDbContextAccessor>
+    {
+        /// <summary>
+        /// 构造一个内容存储初始化器。
+        /// </summary>
+        /// <param name="options">给定的 <see cref="IOptions{ContentBuilderOptions}"/>。</param>
+        /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
+        /// <param name="generator">给定的 <see cref="IStoreIdentificationGenerator"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public ContentStoreInitializer(IOptions<ContentBuilderOptions> options,
+            IDataInitializationValidator validator, IStoreIdentificationGenerator generator, ILoggerFactory loggerFactory)
+            : base(options, validator, generator, loggerFactory)
+        {
+        }
+
+    }
+
+
+    /// <summary>
+    /// 内容存储初始化器。
+    /// </summary>
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
+    public class ContentStoreInitializer<TAccessor> : ContentStoreInitializer<TAccessor, Guid, int, Guid>
+        where TAccessor : class, IContentAccessor, IDataAccessor
+    {
+        /// <summary>
+        /// 构造一个内容存储初始化器。
+        /// </summary>
+        /// <param name="options">给定的 <see cref="IOptions{ContentBuilderOptions}"/>。</param>
+        /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
+        /// <param name="generator">给定的 <see cref="IStoreIdentificationGenerator"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public ContentStoreInitializer(IOptions<ContentBuilderOptions> options,
+            IDataInitializationValidator validator, IStoreIdentificationGenerator generator, ILoggerFactory loggerFactory)
+            : base(options?.Value.Stores.Initialization, validator, generator, loggerFactory)
+        {
+        }
+
+
+        /// <summary>
+        /// 累加增量标识。
+        /// </summary>
+        /// <param name="index">给定的索引。</param>
+        /// <returns>返回整数。</returns>
+        protected override int ProgressiveIncremId(int index)
+            => ++index;
+
+        /// <summary>
+        /// 将生成式标识发表为查询参数值。
+        /// </summary>
+        /// <param name="id">给定的 <see cref="Guid"/>。</param>
+        /// <param name="createdTime">给定的创建时间。</param>
+        /// <returns>返回字符串。</returns>
+        protected override string PublishedAsQueryValue(Guid id, DateTimeOffset createdTime)
+            => id.AsShortString(createdTime);
+
+    }
+
 
     /// <summary>
     /// 内容存储初始化器。
@@ -44,7 +109,8 @@ namespace Librame.Extensions.Content.Stores
             ContentPane<TIncremId, TPublishedBy>,
             ContentPaneUnit<TIncremId, TIncremId, TGenId, TPublishedBy>,
             TGenId, TIncremId, TPublishedBy>
-        where TAccessor : class, IAccessor
+        where TAccessor : class, IContentAccessor<TGenId, TIncremId, TPublishedBy>,
+            IDataAccessor<TGenId, TIncremId, TPublishedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TPublishedBy : IEquatable<TPublishedBy>
@@ -53,13 +119,12 @@ namespace Librame.Extensions.Content.Stores
         /// 构造一个内容存储初始化器。
         /// </summary>
         /// <param name="initializationOptions">给定的 <see cref="ContentStoreInitializationOptions"/>。</param>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator"/>。</param>
-        /// <param name="validator">给定的 <see cref="IStoreInitializationValidator"/>。</param>
+        /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
+        /// <param name="generator">给定的 <see cref="IStoreIdentificationGenerator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         protected ContentStoreInitializer(ContentStoreInitializationOptions initializationOptions,
-            IStoreIdentifierGenerator identifierGenerator,
-            IStoreInitializationValidator validator, ILoggerFactory loggerFactory)
-            : base(initializationOptions, identifierGenerator, validator, loggerFactory)
+            IDataInitializationValidator validator, IStoreIdentificationGenerator generator, ILoggerFactory loggerFactory)
+            : base(initializationOptions, validator, generator, loggerFactory)
         {
         }
 
@@ -101,21 +166,21 @@ namespace Librame.Extensions.Content.Stores
         where TIncremId : IEquatable<TIncremId>
         where TPublishedBy : IEquatable<TPublishedBy>
     {
-        private readonly TIncremId _defaultIncremId = default;
+        private readonly TIncremId _defaultIncremId;
 
 
         /// <summary>
         /// 构造一个内容存储初始化器。
         /// </summary>
         /// <param name="initializationOptions">给定的 <see cref="ContentStoreInitializationOptions"/>。</param>
-        /// <param name="identityGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
         /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
+        /// <param name="generator">给定的 <see cref="IStoreIdentificationGenerator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         protected ContentStoreInitializer(ContentStoreInitializationOptions initializationOptions,
-            IStoreIdentityGenerator identityGenerator,
-            IDataInitializationValidator validator, ILoggerFactory loggerFactory)
-            : base(identityGenerator, validator, loggerFactory)
+            IDataInitializationValidator validator, IStoreIdentificationGenerator generator, ILoggerFactory loggerFactory)
+            : base(validator, generator, loggerFactory)
         {
+            _defaultIncremId = default;
             InitializationOptions = initializationOptions.NotNull(nameof(initializationOptions));
         }
 
@@ -129,9 +194,9 @@ namespace Librame.Extensions.Content.Stores
         /// <summary>
         /// 内容标识生成器。
         /// </summary>
-        /// <value>返回 <see cref="IContentStoreIdentityGenerator{TGenId}"/>。</value>
-        protected IContentStoreIdentityGenerator<TGenId> ContentIdentityGenerator
-            => IdentityGenerator as IContentStoreIdentityGenerator<TGenId>;
+        /// <value>返回 <see cref="IContentStoreIdentificationGenerator{TGenId}"/>。</value>
+        protected IContentStoreIdentificationGenerator<TGenId> ContentGenerator
+            => Generator as IContentStoreIdentificationGenerator<TGenId>;
 
 
         /// <summary>
@@ -171,9 +236,7 @@ namespace Librame.Extensions.Content.Stores
         /// <param name="index">给定的索引。</param>
         /// <returns>返回 <typeparamref name="TIncremId"/>。</returns>
         protected virtual TIncremId ProgressiveIncremId(int index)
-        {
-
-        }
+            => throw new NotImplementedException();
 
         /// <summary>
         /// 将生成式标识发表为查询参数值。
@@ -182,9 +245,7 @@ namespace Librame.Extensions.Content.Stores
         /// <param name="createdTime">给定的创建时间。</param>
         /// <returns>返回字符串。</returns>
         protected virtual string PublishedAsQueryValue(TGenId id, DateTimeOffset createdTime)
-        {
-
-        }
+            => throw new NotImplementedException();
 
 
         /// <summary>
@@ -205,6 +266,28 @@ namespace Librame.Extensions.Content.Stores
             InitializeUnits();
 
             InitializePanes();
+        }
+
+        /// <summary>
+        /// 异步初始化存储集合。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个异步操作。</returns>
+        protected override async Task InitializeStoresAsync(CancellationToken cancellationToken)
+        {
+            await base.InitializeStoresAsync(cancellationToken).ConfigureAwait();
+
+            await InitializeCategoriesAsync(cancellationToken).ConfigureAwait();
+
+            await InitializeSourcesAsync(cancellationToken).ConfigureAwait();
+
+            await InitializeClaimsAsync(cancellationToken).ConfigureAwait();
+
+            await InitializeTagsAsync(cancellationToken).ConfigureAwait();
+
+            await InitializeUnitsAsync(cancellationToken).ConfigureAwait();
+
+            await InitializePanesAsync(cancellationToken).ConfigureAwait();
         }
 
 
@@ -239,6 +322,55 @@ namespace Librame.Extensions.Content.Stores
                     if (!Accessor.RequiredSaveChanges)
                         Accessor.RequiredSaveChanges = true;
                 });
+
+            // GetParentId
+            TIncremId GetParentId(string parentName)
+            {
+                if (parentName.IsEmpty())
+                    return default;
+
+                var category = Accessor.Categories.FirstOrDefault(p => p.Name == parentName);
+                return category.IsNotNull() ? category.Id : default;
+            }
+        }
+
+        /// <summary>
+        /// 异步初始化分类集合。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个异步操作。</returns>
+        protected virtual Task InitializeCategoriesAsync(CancellationToken cancellationToken)
+        {
+            if (CurrentCategories.IsEmpty())
+            {
+                var categoryType = typeof(TCategory);
+
+                CurrentCategories = InitializationOptions.DefaultCategories.Select(pair =>
+                {
+                    var category = categoryType.EnsureCreate<TCategory>();
+
+                    category.Name = pair.Key;
+                    category.ParentId = GetParentId(pair.Value.parentName);
+                    category.Description = pair.Value.description;
+
+                    return category;
+                })
+                .ToList();
+
+                CurrentCategories.ForEach(async category =>
+                {
+                    await category.PopulateCreationAsync(Clock, cancellationToken).ConfigureAwait();
+                });
+            }
+
+            return Accessor.CategoriesManager.TryAddRangeAsync(p => p.Equals(CurrentCategories[0]),
+                () => CurrentCategories,
+                addedPost =>
+                {
+                    if (!Accessor.RequiredSaveChanges)
+                        Accessor.RequiredSaveChanges = true;
+                },
+                cancellationToken);
 
             // GetParentId
             TIncremId GetParentId(string parentName)
@@ -295,11 +427,59 @@ namespace Librame.Extensions.Content.Stores
             }
         }
 
+        /// <summary>
+        /// 异步初始化来源集合。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个异步操作。</returns>
+        protected virtual Task InitializeSourcesAsync(CancellationToken cancellationToken)
+        {
+            if (CurrentSources.IsEmpty())
+            {
+                var sourceType = typeof(TSource);
+
+                CurrentSources = InitializationOptions.DefaultSources.Select(pair =>
+                {
+                    var source = sourceType.EnsureCreate<TSource>();
+
+                    source.Name = pair.Key;
+                    source.ParentId = GetParentId(pair.Value.parentName);
+                    source.Description = pair.Value.description;
+
+                    return source;
+                })
+                .ToList();
+
+                CurrentCategories.ForEach(async category =>
+                {
+                    await category.PopulateCreationAsync(Clock, cancellationToken).ConfigureAwait();
+                });
+            }
+
+            return Accessor.SourcesManager.TryAddRangeAsync(p => p.Equals(CurrentSources[0]),
+                () => CurrentSources,
+                addedPost =>
+                {
+                    if (!Accessor.RequiredSaveChanges)
+                        Accessor.RequiredSaveChanges = true;
+                },
+                cancellationToken);
+
+            // GetParentId
+            TIncremId GetParentId(string parentName)
+            {
+                if (parentName.IsEmpty())
+                    return default;
+
+                var source = Accessor.Sources.FirstOrDefault(p => p.Name == parentName);
+                return source.IsNotNull() ? source.Id : default;
+            }
+        }
+
 
         /// <summary>
         /// 初始化声明集合。
         /// </summary>
-        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual void InitializeClaims()
         {
             if (CurrentClaims.IsEmpty())
@@ -329,11 +509,48 @@ namespace Librame.Extensions.Content.Stores
                 });
         }
 
+        /// <summary>
+        /// 异步初始化声明集合。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个异步操作。</returns>
+        protected virtual Task InitializeClaimsAsync(CancellationToken cancellationToken)
+        {
+            if (CurrentClaims.IsEmpty())
+            {
+                var claimType = typeof(TClaim);
+
+                CurrentClaims = InitializationOptions.DefaultClaims.Select(pair =>
+                {
+                    var claim = claimType.EnsureCreate<TClaim>();
+
+                    claim.Name = pair.Key;
+                    claim.Description = pair.Value;
+
+                    return claim;
+                })
+                .ToList();
+
+                CurrentClaims.ForEach(async claim =>
+                {
+                    await claim.PopulateCreationAsync(Clock, cancellationToken).ConfigureAwait();
+                });
+            }
+
+            return Accessor.ClaimsManager.TryAddRangeAsync(p => p.Equals(CurrentClaims[0]),
+                () => CurrentClaims,
+                addedPost =>
+                {
+                    if (!Accessor.RequiredSaveChanges)
+                        Accessor.RequiredSaveChanges = true;
+                },
+                cancellationToken);
+        }
+
 
         /// <summary>
         /// 初始化标签集合。
         /// </summary>
-        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual void InitializeTags()
         {
             if (CurrentTags.IsEmpty())
@@ -362,96 +579,253 @@ namespace Librame.Extensions.Content.Stores
                 });
         }
 
+        /// <summary>
+        /// 初始化标签集合。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个异步操作。</returns>
+        protected virtual Task InitializeTagsAsync(CancellationToken cancellationToken)
+        {
+            if (CurrentTags.IsEmpty())
+            {
+                var tagType = typeof(TTag);
+
+                CurrentTags = InitializationOptions.DefaultTags.Select(name =>
+                {
+                    var tag = tagType.EnsureCreate<TTag>();
+
+                    tag.Name = name;
+
+                    return tag;
+                })
+                .ToList();
+
+                CurrentTags.ForEach(async tag =>
+                {
+                    await tag.PopulateCreationAsync(Clock, cancellationToken).ConfigureAwait();
+                });
+            }
+
+            return Accessor.TagsManager.TryAddRangeAsync(p => p.Equals(CurrentTags[0]),
+                () => CurrentTags,
+                addedPost =>
+                {
+                    if (!Accessor.RequiredSaveChanges)
+                        Accessor.RequiredSaveChanges = true;
+                },
+                cancellationToken);
+        }
+
 
         /// <summary>
         /// 初始化单元集合。
         /// </summary>
-        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual void InitializeUnits()
         {
-            var tagIndex = 0;
-            var tag = CurrentTags[tagIndex];
-
-            var categoryIndex = 0;
-            foreach (var category in CurrentCategories)
+            if (CurrentUnits.IsEmpty())
             {
-                var claimIndex = 0;
-                foreach (var claim in CurrentClaims)
+                var unitType = typeof(TUnit);
+                var units = new List<TUnit>();
+
+                var tagIndex = 0;
+                var tag = CurrentTags[tagIndex];
+
+                var categoryIndex = 0;
+                foreach (var category in CurrentCategories)
                 {
-                    var title = $"测试{category.Name}{claim.Name}标题";
-
-                    if (!TryGetUnit(category.Id, title, out var unit))
+                    foreach (var claim in CurrentClaims)
                     {
-                        unit = typeof(TUnit).EnsureCreate<TUnit>();
+                        var unit = unitType.EnsureCreate<TUnit>();
 
-                        unit.Id = ContentIdentityGenerator.GenerateUnitIdAsync().ConfigureAndResult();
+                        unit.Id = ContentGenerator.GenerateUnitId();
 
                         unit.CategoryId = category.Id.Equals(_defaultIncremId)
                             ? ProgressiveIncremId(categoryIndex)
                             : category.Id;
-                        
-                        unit.Title = title;
+
+                        unit.Title = $"测试{category.Name}{claim.Name}标题";
                         unit.Subtitle = $"测试{category.Name}{claim.Name}副标题";
                         unit.Tags = $"测试,{category.Name}";
-
-                        unit.PopulateCreationAsync(Clock).ConfigureAndResult();
 
                         //unit.Reference = "/Reference";
                         unit.PublishedAs = $"/unit/{PublishedAsQueryValue(unit.Id, unit.CreatedTime)}";
 
-                        contentStores.TryCreate(unit);
+                        unit.PopulateCreation(Clock);
 
-                        // 添加正文声明
-                        var unitClaim = typeof(TUnitClaim).EnsureCreate<TUnitClaim>();
+                        units.Add(unit);
+                    }
 
-                        unitClaim.UnitId = unit.Id;
+                    categoryIndex++;
+                }
 
-                        unitClaim.ClaimId = claim.Id.Equals(_defaultIncremId)
-                            ? ProgressiveIncremId(claimIndex)
-                            : claim.Id;
+                CurrentUnits = units;
+            }
 
-                        unitClaim.ClaimValue = $"测试{category.Name}{claim.Name}内容1。";
+            Accessor.UnitsManager.TryAddRange(p => p.Equals(CurrentUnits[0]),
+                () =>
+                {
+                    var unitClaimType = typeof(TUnitClaim);
+                    var unitTagType = typeof(TUnitTag);
+                    var unitVisitCountType = typeof(TUnitVisitCount);
 
-                        unitClaim.PopulateCreationAsync(Clock).ConfigureAndResult();
+                    foreach (var unit in CurrentUnits)
+                    {
+                        // AddUnitClaims
+                        var claimIndex = 0;
+                        foreach (var claim in CurrentClaims)
+                        {
+                            var unitClaim = unitClaimType.EnsureCreate<TUnitClaim>();
 
-                        contentStores.TryCreate(unitClaim);
+                            unitClaim.UnitId = unit.Id;
+                            unitClaim.ClaimId = claim.Id.Equals(_defaultIncremId)
+                                ? ProgressiveIncremId(claimIndex)
+                                : claim.Id;
 
-                        // 添加标签
-                        var unitTag = typeof(TUnitTag).EnsureCreate<TUnitTag>();
+                            unitClaim.ClaimValue = unit.Title.Replace("标题", "声明值", StringComparison.InvariantCulture);
 
-                        unitTag.UnitId = unit.Id;
+                            unitClaim.PopulateCreation(Clock);
 
-                        unitTag.TagId = tag.Id.Equals(_defaultIncremId)
-                            ? ProgressiveIncremId(tagIndex)
-                            : tag.Id;
+                            Accessor.UnitClaims.Add(unitClaim);
+                            claimIndex++;
+                        }
 
-                        contentStores.TryCreate(unitTag);
+                        // AddUnitTags
+                        var tagIndex = 0;
+                        foreach (var tag in CurrentTags)
+                        {
+                            var unitTag = unitTagType.EnsureCreate<TUnitTag>();
+
+                            unitTag.UnitId = unit.Id;
+                            unitTag.TagId = tag.Id.Equals(_defaultIncremId)
+                                ? ProgressiveIncremId(tagIndex)
+                                : tag.Id;
+
+                            Accessor.UnitTags.Add(unitTag);
+                            tagIndex++;
+                        }
 
                         // 添加访问计数
-                        var unitVisitCount = typeof(TUnitVisitCount).EnsureCreate<TUnitVisitCount>();
+                        var unitVisitCount = unitVisitCountType.EnsureCreate<TUnitVisitCount>();
 
                         unitVisitCount.UnitId = unit.Id;
 
-                        contentStores.TryCreate(unitVisitCount);
-
-                        if (!RequiredSaveChanges)
-                            RequiredSaveChanges = true;
+                        Accessor.UnitVisitCounts.Add(unitVisitCount);
                     }
 
-                    CurrentUnits.Add(unit);
+                    return CurrentUnits;
+                },
+                addedPost =>
+                {
+                    if (!Accessor.RequiredSaveChanges)
+                        Accessor.RequiredSaveChanges = true;
+                });
+        }
 
-                    claimIndex++;
+        /// <summary>
+        /// 初始化单元集合。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个异步操作。</returns>
+        protected virtual async Task InitializeUnitsAsync(CancellationToken cancellationToken)
+        {
+            if (CurrentUnits.IsEmpty())
+            {
+                var unitType = typeof(TUnit);
+                var units = new List<TUnit>();
+
+                var tagIndex = 0;
+                var tag = CurrentTags[tagIndex];
+
+                var categoryIndex = 0;
+                foreach (var category in CurrentCategories)
+                {
+                    foreach (var claim in CurrentClaims)
+                    {
+                        var unit = unitType.EnsureCreate<TUnit>();
+
+                        unit.Id = await ContentGenerator.GenerateUnitIdAsync(cancellationToken).ConfigureAwait();
+
+                        unit.CategoryId = category.Id.Equals(_defaultIncremId)
+                            ? ProgressiveIncremId(categoryIndex)
+                            : category.Id;
+
+                        unit.Title = $"测试{category.Name}{claim.Name}标题";
+                        unit.Subtitle = $"测试{category.Name}{claim.Name}副标题";
+                        unit.Tags = $"测试,{category.Name}";
+
+                        //unit.Reference = "/Reference";
+                        unit.PublishedAs = $"/unit/{PublishedAsQueryValue(unit.Id, unit.CreatedTime)}";
+
+                        await unit.PopulateCreationAsync(Clock, cancellationToken).ConfigureAwait();
+
+                        units.Add(unit);
+                    }
+
+                    categoryIndex++;
                 }
 
-                categoryIndex++;
+                CurrentUnits = units;
             }
 
-            // TryGetUnit
-            bool TryGetUnit(TIncremId categoryId, string title, out TUnit unit)
-            {
-                unit = contentStores.Units.FirstOrDefault(p => p.CategoryId.Equals(categoryId) && p.Title == title);
-                return unit.IsNotNull();
-            }
+            await Accessor.UnitsManager.TryAddRangeAsync(p => p.Equals(CurrentUnits[0]),
+                async () =>
+                {
+                    var unitClaimType = typeof(TUnitClaim);
+                    var unitTagType = typeof(TUnitTag);
+                    var unitVisitCountType = typeof(TUnitVisitCount);
+
+                    foreach (var unit in CurrentUnits)
+                    {
+                        // AddUnitClaims
+                        var claimIndex = 0;
+                        foreach (var claim in CurrentClaims)
+                        {
+                            var unitClaim = unitClaimType.EnsureCreate<TUnitClaim>();
+
+                            unitClaim.UnitId = unit.Id;
+                            unitClaim.ClaimId = claim.Id.Equals(_defaultIncremId)
+                                ? ProgressiveIncremId(claimIndex)
+                                : claim.Id;
+
+                            unitClaim.ClaimValue = unit.Title.Replace("标题", "声明值", StringComparison.InvariantCulture);
+
+                            await unitClaim.PopulateCreationAsync(Clock, cancellationToken).ConfigureAwait();
+
+                            await Accessor.UnitClaims.AddAsync(unitClaim).ConfigureAwait();
+                            claimIndex++;
+                        }
+
+                        // AddUnitTags
+                        var tagIndex = 0;
+                        foreach (var tag in CurrentTags)
+                        {
+                            var unitTag = unitTagType.EnsureCreate<TUnitTag>();
+
+                            unitTag.UnitId = unit.Id;
+                            unitTag.TagId = tag.Id.Equals(_defaultIncremId)
+                                ? ProgressiveIncremId(tagIndex)
+                                : tag.Id;
+
+                            await Accessor.UnitTags.AddAsync(unitTag).ConfigureAwait();
+                            tagIndex++;
+                        }
+
+                        // 添加访问计数
+                        var unitVisitCount = unitVisitCountType.EnsureCreate<TUnitVisitCount>();
+
+                        unitVisitCount.UnitId = unit.Id;
+
+                        await Accessor.UnitVisitCounts.AddAsync(unitVisitCount).ConfigureAwait();
+                    }
+
+                    return CurrentUnits;
+                },
+                addedPost =>
+                {
+                    if (!Accessor.RequiredSaveChanges)
+                        Accessor.RequiredSaveChanges = true;
+                },
+                cancellationToken).ConfigureAwait();
         }
 
 
@@ -461,60 +835,156 @@ namespace Librame.Extensions.Content.Stores
         protected virtual void InitializePanes()
         {
             var defaultPanes = InitializationOptions.DefaultPanes;
-            var allUnitIds = CurrentUnits.Select(s => s.Id).ToList();
-            var offset = allUnitIds.Count / defaultPanes.Count;
 
-            var paneIndex = 0;
-            foreach (var pair in defaultPanes)
+            if (CurrentPanes.IsEmpty())
             {
-                if (!TryGetPane(pair.Key, out var pane))
-                {
-                    (string parentName, string description) = pair.Value;
+                var paneType = typeof(TPane);
 
-                    pane = typeof(TPane).EnsureCreate<TPane>();
+                CurrentPanes = defaultPanes.Select(pair =>
+                {
+                    var pane = paneType.EnsureCreate<TPane>();
 
                     pane.Name = pair.Key;
-                    pane.ParentId = GetParentId(parentName);
-                    pane.Description = description;
+                    pane.ParentId = GetParentId(pair.Value.parentName);
+                    pane.Description = pair.Value.description;
 
-                    pane.PopulateCreationAsync(Clock);
+                    pane.PopulateCreation(Clock);
 
-                    contentStores.TryCreate(pane);
+                    return pane;
+                })
+                .ToList();
+            }
 
-                    // 添加窗格单元
-                    var unitIds = paneIndex < offset - 1 ? allUnitIds.Take(offset) : allUnitIds.Skip(offset);
-                    foreach (var unitId in unitIds)
+            Accessor.PanesManager.TryAddRange(p => p.Equals(CurrentPanes[0]),
+                () =>
+                {
+                    // AddPaneUnits
+                    var paneUnitType = typeof(TPaneUnit);
+
+                    var allUnitIds = CurrentUnits.Select(s => s.Id).ToList();
+                    var paneUnitIdsCount = allUnitIds.Count / defaultPanes.Count;
+
+                    var paneIndex = 0;
+                    foreach (var pane in CurrentPanes)
                     {
-                        var paneUnit = typeof(TPaneUnit).EnsureCreate<TPaneUnit>();
+                        for (var i = 0; i < paneUnitIdsCount; i++)
+                        {
+                            var paneUnit = paneUnitType.EnsureCreate<TPaneUnit>();
 
-                        paneUnit.UnitId = unitId;
+                            var unitIndex = paneIndex * paneUnitIdsCount + i;
+                            paneUnit.UnitId = CurrentUnits[unitIndex].Id;
 
-                        paneUnit.PaneId = pane.Id.Equals(_defaultIncremId)
-                            ? ProgressiveIncremId(paneIndex)
-                            : pane.Id;
+                            paneUnit.PaneId = pane.Id.Equals(_defaultIncremId)
+                                ? ProgressiveIncremId(paneIndex)
+                                : pane.Id;
 
-                        paneUnit.PopulateCreationAsync(Clock);
+                            paneUnit.PopulateCreation(Clock);
 
-                        contentStores.TryCreate(paneUnit);
+                            Accessor.PaneUnits.Add(paneUnit);
+                        }
+
+                        paneIndex++;
                     }
-                    
-                    RequiredSaveChanges = true;
-                }
 
-                CurrentPanes.Add(pane);
-                paneIndex++;
-            }
-
-            // TryGetPane
-            bool TryGetPane(string paneName, out TPane pane)
-            {
-                pane = contentStores.Panes.FirstOrDefault(p => p.Name == paneName);
-                return pane.IsNotNull();
-            }
+                    return CurrentPanes;
+                },
+                addedPost =>
+                {
+                    if (!Accessor.RequiredSaveChanges)
+                        Accessor.RequiredSaveChanges = true;
+                });
 
             // GetParentId
             TIncremId GetParentId(string parentName)
-                => parentName.IsNotEmpty() && TryGetPane(parentName, out var pane) ? pane.ParentId : default;
+            {
+                if (parentName.IsEmpty())
+                    return default;
+
+                var pane = Accessor.Panes.FirstOrDefault(p => p.Name == parentName);
+                return pane.IsNotNull() ? pane.Id : default;
+            }
+        }
+
+        /// <summary>
+        /// 初始化窗格集合。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个异步操作。</returns>
+        protected virtual Task InitializePanesAsync(CancellationToken cancellationToken)
+        {
+            var defaultPanes = InitializationOptions.DefaultPanes;
+
+            if (CurrentPanes.IsEmpty())
+            {
+                var paneType = typeof(TPane);
+
+                CurrentPanes = defaultPanes.Select(pair =>
+                {
+                    var pane = paneType.EnsureCreate<TPane>();
+
+                    pane.Name = pair.Key;
+                    pane.ParentId = GetParentId(pair.Value.parentName);
+                    pane.Description = pair.Value.description;
+
+                    return pane;
+                })
+                .ToList();
+
+                CurrentPanes.ForEach(async pane =>
+                {
+                    await pane.PopulateCreationAsync(Clock, cancellationToken).ConfigureAwait();
+                });
+            }
+
+            return Accessor.PanesManager.TryAddRangeAsync(p => p.Equals(CurrentPanes[0]),
+                async () =>
+                {
+                    // AddPaneUnits
+                    var paneUnitType = typeof(TPaneUnit);
+
+                    var allUnitIds = CurrentUnits.Select(s => s.Id).ToList();
+                    var paneUnitIdsCount = allUnitIds.Count / defaultPanes.Count;
+
+                    var paneIndex = 0;
+                    foreach (var pane in CurrentPanes)
+                    {
+                        for (var i = 0; i < paneUnitIdsCount; i++)
+                        {
+                            var paneUnit = paneUnitType.EnsureCreate<TPaneUnit>();
+
+                            var unitIndex = paneIndex * paneUnitIdsCount + i;
+                            paneUnit.UnitId = CurrentUnits[unitIndex].Id;
+
+                            paneUnit.PaneId = pane.Id.Equals(_defaultIncremId)
+                                ? ProgressiveIncremId(paneIndex)
+                                : pane.Id;
+
+                            await paneUnit.PopulateCreationAsync(Clock, cancellationToken).ConfigureAwait();
+
+                            await Accessor.PaneUnits.AddAsync(paneUnit, cancellationToken).ConfigureAwait();
+                        }
+
+                        paneIndex++;
+                    }
+
+                    return CurrentPanes;
+                },
+                addedPost =>
+                {
+                    if (!Accessor.RequiredSaveChanges)
+                        Accessor.RequiredSaveChanges = true;
+                },
+                cancellationToken);
+
+            // GetParentId
+            TIncremId GetParentId(string parentName)
+            {
+                if (parentName.IsEmpty())
+                    return default;
+
+                var pane = Accessor.Panes.FirstOrDefault(p => p.Name == parentName);
+                return pane.IsNotNull() ? pane.Id : default;
+            }
         }
 
     }

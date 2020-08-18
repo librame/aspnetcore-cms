@@ -18,12 +18,15 @@ namespace Librame.Extensions.Portal.Accessors
 {
     using Content.Accessors;
     using Content.Stores;
+    using Data;
+    using Data.Accessors;
     using Portal.Stores;
 
     /// <summary>
     /// 内容门户数据库上下文访问器。
     /// </summary>
-    public class ContentPortalDbContextAccessor : ContentPortalDbContextAccessor<Guid, int, Guid, Guid>
+    public class ContentPortalDbContextAccessor : ContentPortalDbContextAccessor<Guid, int, Guid, Guid>,
+        IContentPortalAccessor, IDataAccessor
     {
         /// <summary>
         /// 构造一个内容门户数据库上下文访问器实例。
@@ -57,7 +60,9 @@ namespace Librame.Extensions.Portal.Accessors
             ContentPaneUnit<TIncremId, TIncremId, TGenId, TPublishedBy>,
             PortalEditor<TGenId, TUserId, TPublishedBy>,
             PortalInternalUser<TGenId, TPublishedBy>,
-            TGenId, TIncremId, TUserId, TPublishedBy>
+            TGenId, TIncremId, TUserId, TPublishedBy>,
+            IContentPortalAccessor<TGenId, TIncremId, TUserId, TPublishedBy>,
+            IDataAccessor<TGenId, TIncremId, TPublishedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TUserId : IEquatable<TUserId>
@@ -96,7 +101,7 @@ namespace Librame.Extensions.Portal.Accessors
     /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
     public class ContentPortalDbContextAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TEditor, TInternalUser, TGenId, TIncremId, TUserId, TPublishedBy>
         : ContentDbContextAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TGenId, TIncremId, TPublishedBy>,
-        IContentPortalDbContextAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TEditor, TInternalUser>
+            IContentPortalAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TEditor, TInternalUser>
         where TCategory : ContentCategory<TIncremId, TPublishedBy>
         where TSource : ContentSource<TIncremId, TPublishedBy>
         where TClaim : ContentClaim<TIncremId, TPublishedBy>
@@ -136,13 +141,26 @@ namespace Librame.Extensions.Portal.Accessors
 
 
         /// <summary>
-        /// 开始创建模型。
+        /// 编者数据集管理器。
+        /// </summary>
+        public DbSetManager<TEditor> EditorsManager
+            => Editors.AsManager();
+
+        /// <summary>
+        /// 内置用户数据集管理器。
+        /// </summary>
+        public DbSetManager<TInternalUser> InternalUsersManager
+            => InternalUsers.AsManager();
+
+
+        /// <summary>
+        /// 配置模型构建器核心。
         /// </summary>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreatingCore(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreatingCore(modelBuilder);
 
             modelBuilder.ConfigureContentStores(this);
 

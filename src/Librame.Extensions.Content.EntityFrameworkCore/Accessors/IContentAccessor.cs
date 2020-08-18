@@ -78,103 +78,103 @@ namespace Librame.Extensions.Content.Accessors
         where TPaneUnit : class
     {
         /// <summary>
-        /// 内容分类数据集。
+        /// 分类数据集。
         /// </summary>
         DbSet<TCategory> Categories { get; set; }
 
         /// <summary>
-        /// 内容来源数据集。
+        /// 来源数据集。
         /// </summary>
         DbSet<TSource> Sources { get; set; }
 
         /// <summary>
-        /// 内容声明数据集。
+        /// 声明数据集。
         /// </summary>
         DbSet<TClaim> Claims { get; set; }
 
         /// <summary>
-        /// 内容标签数据集。
+        /// 标签数据集。
         /// </summary>
         DbSet<TTag> Tags { get; set; }
 
         /// <summary>
-        /// 内容单元数据集。
+        /// 单元数据集。
         /// </summary>
         DbSet<TUnit> Units { get; set; }
 
         /// <summary>
-        /// 内容单元声明数据集。
+        /// 单元声明数据集。
         /// </summary>
         DbSet<TUnitClaim> UnitClaims { get; set; }
 
         /// <summary>
-        /// 内容单元标签数据集。
+        /// 单元标签数据集。
         /// </summary>
         DbSet<TUnitTag> UnitTags { get; set; }
 
         /// <summary>
-        /// 内容单元访问计数数据集。
+        /// 单元访问计数数据集。
         /// </summary>
         DbSet<TUnitVisitCount> UnitVisitCounts { get; set; }
 
         /// <summary>
-        /// 内容窗格数据集。
+        /// 窗格数据集。
         /// </summary>
         DbSet<TPane> Panes { get; set; }
 
         /// <summary>
-        /// 内容窗格单元数据集。
+        /// 窗格单元数据集。
         /// </summary>
         DbSet<TPaneUnit> PaneUnits { get; set; }
 
 
         /// <summary>
-        /// 内容分类数据集管理器。
+        /// 分类数据集管理器。
         /// </summary>
         DbSetManager<TCategory> CategoriesManager { get; }
 
         /// <summary>
-        /// 内容来源数据集管理器。
+        /// 来源数据集管理器。
         /// </summary>
         DbSetManager<TSource> SourcesManager { get; }
 
         /// <summary>
-        /// 内容声明数据集管理器。
+        /// 声明数据集管理器。
         /// </summary>
         DbSetManager<TClaim> ClaimsManager { get; }
 
         /// <summary>
-        /// 内容标签数据集管理器。
+        /// 标签数据集管理器。
         /// </summary>
         DbSetManager<TTag> TagsManager { get; }
 
         /// <summary>
-        /// 内容单元数据集管理器。
+        /// 单元数据集管理器。
         /// </summary>
         DbSetManager<TUnit> UnitsManager { get; }
 
         /// <summary>
-        /// 内容单元声明数据集管理器。
+        /// 单元声明数据集管理器。
         /// </summary>
         DbSetManager<TUnitClaim> UnitClaimsManager { get; }
 
         /// <summary>
-        /// 内容单元标签数据集管理器。
+        /// 单元标签数据集管理器。
         /// </summary>
         DbSetManager<TUnitTag> UnitTagsManager { get; }
 
         /// <summary>
-        /// 内容单元访问计数数据集管理器。
+        /// 单元访问计数数据集管理器。
         /// </summary>
         DbSetManager<TUnitVisitCount> UnitVisitCountsManager { get; }
 
         /// <summary>
-        /// 内容窗格数据集管理器。
+        /// 窗格数据集管理器。
         /// </summary>
         DbSetManager<TPane> PanesManager { get; }
 
         /// <summary>
-        /// 内容窗格单元数据集管理器。
+        /// 窗格单元数据集管理器。
         /// </summary>
         DbSetManager<TPaneUnit> PaneUnitsManager { get; }
     }

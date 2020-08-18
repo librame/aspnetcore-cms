@@ -1,5 +1,4 @@
-﻿using Librame.Extensions.Data.Builders;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 using System;
 
 namespace BlazorExample
@@ -8,9 +7,6 @@ namespace BlazorExample
     {
         public static string Validate(string connectionString)
         {
-            // 手动解密
-            connectionString = DataBuilderDependency.DecryptConnectionString(connectionString);
-
             var csb = new MySqlConnectionStringBuilder(connectionString);
             if (csb.AllowUserVariables != true || csb.UseAffectedRows)
             {

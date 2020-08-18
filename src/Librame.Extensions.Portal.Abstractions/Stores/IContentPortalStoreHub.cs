@@ -31,7 +31,7 @@ namespace Librame.Extensions.Portal.Stores
     /// <typeparam name="TInternalUser">指定的内置用户类型。</typeparam>
     public interface IContentPortalStoreHub<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TEditor, TInternalUser>
         : IContentStoreHub<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit>,
-        IPortalStoreHub<TEditor, TInternalUser>
+            IPortalStoreHub<TEditor, TInternalUser>
         where TCategory : class
         where TSource : class
         where TClaim : class

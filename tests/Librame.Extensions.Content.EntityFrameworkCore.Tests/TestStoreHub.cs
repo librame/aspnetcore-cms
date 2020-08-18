@@ -7,12 +7,11 @@ namespace Librame.Extensions.Content.Tests
     using Content.Stores;
     using Data.Accessors;
     using Data.Collections;
-    using Data.Stores;
 
     public class TestStoreHub : ContentStoreHub
     {
-        public TestStoreHub(IStoreInitializer initializer, IAccessor accessor)
-            : base(initializer, accessor)
+        public TestStoreHub(IAccessor accessor)
+            : base(accessor)
         {
         }
 
@@ -46,5 +45,19 @@ namespace Librame.Extensions.Content.Tests
 
         public IList<ContentPaneUnit<int, int, Guid, Guid>> GetPaneUnits()
             => Accessor.PaneUnits.ToList();
+
+
+        public TestStoreHub UseWriteDbConnection()
+        {
+            Accessor.ChangeConnectionString(t => t.WritingConnectionString);
+            return this;
+        }
+
+        public TestStoreHub UseDefaultDbConnection()
+        {
+            Accessor.ChangeConnectionString(t => t.DefaultConnectionString);
+            return this;
+        }
+
     }
 }

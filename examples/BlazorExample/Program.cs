@@ -44,7 +44,7 @@ namespace BlazorExample
                 })
                 .AddDatabaseDesignTime<MySqlDesignTimeServices>()
                 .AddStoreHub<ContentStoreHub>()
-                .AddStoreIdentifierGenerator<GuidContentStoreIdentifierGenerator>()
+                .AddStoreIdentifierGenerator<GuidContentStoreIdentificationGenerator>()
                 .AddStoreInitializer<GuidContentStoreInitializer>()
                 .AddContent(dependency =>
                 {

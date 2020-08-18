@@ -3,15 +3,10 @@ using System;
 
 namespace Librame.Extensions.Portal.Tests
 {
-    using Data.Builders;
-
     internal class MySqlConnectionStringHelper
     {
         public static string Validate(string connectionString)
         {
-            // 手动解密
-            connectionString = DataBuilderDependency.DecryptConnectionString(connectionString);
-
             var csb = new MySqlConnectionStringBuilder(connectionString);
             if (csb.AllowUserVariables != true || csb.UseAffectedRows)
             {

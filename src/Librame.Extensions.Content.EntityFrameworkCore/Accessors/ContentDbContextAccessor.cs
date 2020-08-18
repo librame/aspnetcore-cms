@@ -64,7 +64,7 @@ namespace Librame.Extensions.Content.Accessors
         /// 构造一个内容数据库上下文访问器实例。
         /// </summary>
         /// <param name="options">给定的 <see cref="DbContextOptions"/>。</param>
-        public ContentDbContextAccessor(DbContextOptions options)
+        protected ContentDbContextAccessor(DbContextOptions options)
             : base(options)
         {
         }
@@ -90,7 +90,7 @@ namespace Librame.Extensions.Content.Accessors
     /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
     public class ContentDbContextAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TGenId, TIncremId, TPublishedBy>
         : DataDbContextAccessor<TGenId, TIncremId, TPublishedBy>,
-        IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit>
+            IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit>
         where TCategory : ContentCategory<TIncremId, TPublishedBy>
         where TSource : ContentSource<TIncremId, TPublishedBy>
         where TClaim : ContentClaim<TIncremId, TPublishedBy>
@@ -109,131 +109,131 @@ namespace Librame.Extensions.Content.Accessors
         /// 构造一个内容数据库上下文访问器实例。
         /// </summary>
         /// <param name="options">给定的 <see cref="DbContextOptions"/>。</param>
-        public ContentDbContextAccessor(DbContextOptions options)
+        protected ContentDbContextAccessor(DbContextOptions options)
             : base(options)
         {
         }
 
 
         /// <summary>
-        /// 内容分类数据集。
+        /// 分类数据集。
         /// </summary>
         public DbSet<TCategory> Categories { get; set; }
 
         /// <summary>
-        /// 内容来源数据集。
+        /// 来源数据集。
         /// </summary>
         public DbSet<TSource> Sources { get; set; }
 
         /// <summary>
-        /// 内容声明数据集。
+        /// 声明数据集。
         /// </summary>
         public DbSet<TClaim> Claims { get; set; }
 
         /// <summary>
-        /// 内容标签数据集。
+        /// 标签数据集。
         /// </summary>
         public DbSet<TTag> Tags { get; set; }
 
         /// <summary>
-        /// 内容单元数据集。
+        /// 单元数据集。
         /// </summary>
         public DbSet<TUnit> Units { get; set; }
 
         /// <summary>
-        /// 内容单元声明数据集。
+        /// 单元声明数据集。
         /// </summary>
         public DbSet<TUnitClaim> UnitClaims { get; set; }
 
         /// <summary>
-        /// 内容单元标签数据集。
+        /// 单元标签数据集。
         /// </summary>
         public DbSet<TUnitTag> UnitTags { get; set; }
 
         /// <summary>
-        /// 内容单元统计数据集。
+        /// 单元统计数据集。
         /// </summary>
         public DbSet<TUnitVisitCount> UnitVisitCounts { get; set; }
 
         /// <summary>
-        /// 内容窗格数据集。
+        /// 窗格数据集。
         /// </summary>
         public DbSet<TPane> Panes { get; set; }
 
         /// <summary>
-        /// 内容窗格单元数据集。
+        /// 窗格单元数据集。
         /// </summary>
         public DbSet<TPaneUnit> PaneUnits { get; set; }
 
 
         /// <summary>
-        /// 内容分类数据集管理器。
+        /// 分类数据集管理器。
         /// </summary>
         public DbSetManager<TCategory> CategoriesManager
             => Categories.AsManager();
 
         /// <summary>
-        /// 内容来源数据集管理器。
+        /// 来源数据集管理器。
         /// </summary>
         public DbSetManager<TSource> SourcesManager
             => Sources.AsManager();
 
         /// <summary>
-        /// 内容声明数据集管理器。
+        /// 声明数据集管理器。
         /// </summary>
         public DbSetManager<TClaim> ClaimsManager
             => Claims.AsManager();
 
         /// <summary>
-        /// 内容标签数据集管理器。
+        /// 标签数据集管理器。
         /// </summary>
         public DbSetManager<TTag> TagsManager
             => Tags.AsManager();
 
         /// <summary>
-        /// 内容单元数据集管理器。
+        /// 单元数据集管理器。
         /// </summary>
         public DbSetManager<TUnit> UnitsManager
             => Units.AsManager();
 
         /// <summary>
-        /// 内容单元声明数据集管理器。
+        /// 单元声明数据集管理器。
         /// </summary>
         public DbSetManager<TUnitClaim> UnitClaimsManager
             => UnitClaims.AsManager();
 
         /// <summary>
-        /// 内容单元标签数据集管理器。
+        /// 单元标签数据集管理器。
         /// </summary>
         public DbSetManager<TUnitTag> UnitTagsManager
             => UnitTags.AsManager();
 
         /// <summary>
-        /// 内容单元访问计数数据集管理器。
+        /// 单元访问计数数据集管理器。
         /// </summary>
         public DbSetManager<TUnitVisitCount> UnitVisitCountsManager
             => UnitVisitCounts.AsManager();
 
         /// <summary>
-        /// 内容窗格数据集管理器。
+        /// 窗格数据集管理器。
         /// </summary>
         public DbSetManager<TPane> PanesManager
             => Panes.AsManager();
 
         /// <summary>
-        /// 内容窗格单元数据集管理器。
+        /// 窗格单元数据集管理器。
         /// </summary>
         public DbSetManager<TPaneUnit> PaneUnitsManager
             => PaneUnits.AsManager();
 
 
         /// <summary>
-        /// 开始创建模型。
+        /// 配置模型构建器核心。
         /// </summary>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreatingCore(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreatingCore(modelBuilder);
 
             modelBuilder.ConfigureContentStores(this);
         }
