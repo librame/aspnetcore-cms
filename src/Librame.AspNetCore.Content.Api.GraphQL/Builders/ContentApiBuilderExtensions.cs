@@ -39,12 +39,12 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var builder = contentBuilder.AddApi(configureDependency, builderFactory);
 
-            var accessorMappingDescriptor = contentBuilder.AccessorTypeParameterMapper;
+            var parameterMapper = contentBuilder.AccessorTypeParameterMapper;
 
             var apiMutationType = typeof(ContentGraphApiMutation<,,>).MakeGenericType(
                 contentBuilder.Source.UserType,
-                accessorMappingDescriptor.GenId.ArgumentType,
-                accessorMappingDescriptor.CreatedBy.ArgumentType);
+                parameterMapper.GenId.ArgumentType,
+                parameterMapper.CreatedBy.ArgumentType);
 
             var apiQueryType = typeof(ContentGraphApiQuery<,>).MakeGenericType(
                 contentBuilder.Source.RoleType,

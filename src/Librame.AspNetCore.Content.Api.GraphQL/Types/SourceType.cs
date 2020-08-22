@@ -10,25 +10,31 @@
 
 #endregion
 
-namespace Librame.AspNetCore.Content.Api.ModelTypes
+namespace Librame.AspNetCore.Content.Api.Types
 {
-    using AspNetCore.Api;
+    using AspNetCore.Api.Types;
     using AspNetCore.Content.Api.Models;
 
     /// <summary>
-    /// 登入输入类型。
+    /// 来源类型。
     /// </summary>
-    public class CategoryInputType : ApiModelInputGraphTypeBase<CategoryApiModel>
+    public class SourceType : ApiTypeBase<SourceModel>
     {
         /// <summary>
-        /// 构造一个 <see cref="CategoryInputType"/> 实例。
+        /// 构造一个来源类型。
         /// </summary>
-        public CategoryInputType()
+        public SourceType()
             : base()
         {
-            Name = GetInputTypeName<CategoryInputType>();
+            Field(f => f.Id);
+            Field(f => f.Name);
+            Field(f => f.Description);
+            Field(f => f.Website);
+            Field(f => f.Weblogo);
+            Field(f => f.CreatedTime);
+            Field(f => f.CreatedBy);
 
-            this.AddCategoryApiModelFields();
+            Field(f => f.Parent, type: typeof(SourceType));
         }
 
     }

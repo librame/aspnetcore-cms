@@ -10,28 +10,26 @@
 
 #endregion
 
-namespace Librame.AspNetCore.Content.Api.Models
+namespace Librame.AspNetCore.Content.Api.Types
 {
-    using AspNetCore.Api.Models;
+    using AspNetCore.Api.Types;
+    using AspNetCore.Content.Api.Models;
 
     /// <summary>
-    /// 分类 API 模型。
+    /// 单元声明类型。
     /// </summary>
-    public class CategoryApiModel : AbstractApiModel
+    public class UnitClaimType : ApiTypeBase<UnitClaimModel>
     {
         /// <summary>
-        /// 父级。
+        /// 构造一个单元声明类型。
         /// </summary>
-        public string Parent { get; set; }
+        public UnitClaimType()
+            : base()
+        {
+            Field(f => f.Value);
 
-        /// <summary>
-        /// 名称。
-        /// </summary>
-        public string Name { get; set; }
+            Field(f => f.Claim, type: typeof(ClaimType));
+        }
 
-        /// <summary>
-        /// 描述。
-        /// </summary>
-        public string Description { get; set; }
     }
 }

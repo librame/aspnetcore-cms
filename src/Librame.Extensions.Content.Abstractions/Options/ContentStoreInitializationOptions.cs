@@ -21,7 +21,7 @@ namespace Librame.Extensions.Content.Options
     public class ContentStoreInitializationOptions
     {
         /// <summary>
-        /// 默认分类字典集合（值元组分别表示父名称、备注）。
+        /// 默认分类字典集合（值元组分别表示父名称、备注；空父名称表示为根分类）。
         /// </summary>
         [SuppressMessage("Usage", "CA2227:集合属性应为只读")]
         public Dictionary<string, (string parentName, string description)> DefaultCategories { get; set; }
@@ -35,17 +35,17 @@ namespace Librame.Extensions.Content.Options
             };
 
         /// <summary>
-        /// 默认声明字典集合。
+        /// 默认声明字典集合（值元组分别表示分类名称、备注；空分类名称表示不限制分类，即所有分类）。
         /// </summary>
         [SuppressMessage("Usage", "CA2227:集合属性应为只读")]
-        public Dictionary<string, string> DefaultClaims { get; set; }
-            = new Dictionary<string, string>
+        public Dictionary<string, (string categoryName, string description)> DefaultClaims { get; set; }
+            = new Dictionary<string, (string categoryName, string description)>
             {
-                { "正文", "正文 (Text)" }
+                { "正文", ( null, "正文 (Text)" ) }
             };
 
         /// <summary>
-        /// 默认窗格字典集合（值元组分别表示父名称、备注）。
+        /// 默认窗格字典集合（值元组分别表示父名称、备注；空父名称表示为根窗格）。
         /// </summary>
         [SuppressMessage("Usage", "CA2227:集合属性应为只读")]
         public Dictionary<string, (string parentName, string description)> DefaultPanes { get; set; }
@@ -58,7 +58,7 @@ namespace Librame.Extensions.Content.Options
             };
 
         /// <summary>
-        /// 默认来源字典集合（值元组分别表示父名称、备注）。
+        /// 默认来源字典集合（值元组分别表示父名称、备注；空父名称表示为根来源）。
         /// </summary>
         [SuppressMessage("Usage", "CA2227:集合属性应为只读")]
         public Dictionary<string, (string parentName, string description)> DefaultSources { get; set; }

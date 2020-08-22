@@ -50,7 +50,7 @@ namespace Librame.Extensions.Portal.Accessors
     public class ContentPortalDbContextAccessor<TGenId, TIncremId, TUserId, TPublishedBy>
         : ContentPortalDbContextAccessor<ContentCategory<TIncremId, TPublishedBy>,
             ContentSource<TIncremId, TPublishedBy>,
-            ContentClaim<TIncremId, TPublishedBy>,
+            ContentClaim<TIncremId, TIncremId, TPublishedBy>,
             ContentTag<TIncremId, TPublishedBy>,
             ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>,
             ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>,
@@ -104,7 +104,7 @@ namespace Librame.Extensions.Portal.Accessors
             IContentPortalAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TEditor, TInternalUser>
         where TCategory : ContentCategory<TIncremId, TPublishedBy>
         where TSource : ContentSource<TIncremId, TPublishedBy>
-        where TClaim : ContentClaim<TIncremId, TPublishedBy>
+        where TClaim : ContentClaim<TIncremId, TIncremId, TPublishedBy>
         where TTag : ContentTag<TIncremId, TPublishedBy>
         where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>
         where TUnitClaim : ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>

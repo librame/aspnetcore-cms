@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -100,7 +101,7 @@ namespace Librame.Extensions.Content.Stores
         : ContentStoreInitializer<TAccessor,
             ContentCategory<TIncremId, TPublishedBy>,
             ContentSource<TIncremId, TPublishedBy>,
-            ContentClaim<TIncremId, TPublishedBy>,
+            ContentClaim<TIncremId, TIncremId, TPublishedBy>,
             ContentTag<TIncremId, TPublishedBy>,
             ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>,
             ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>,
@@ -154,7 +155,7 @@ namespace Librame.Extensions.Content.Stores
             IDataAccessor<TGenId, TIncremId, TPublishedBy>
         where TCategory : ContentCategory<TIncremId, TPublishedBy>
         where TSource : ContentSource<TIncremId, TPublishedBy>
-        where TClaim : ContentClaim<TIncremId, TPublishedBy>
+        where TClaim : ContentClaim<TIncremId, TIncremId, TPublishedBy>
         where TTag : ContentTag<TIncremId, TPublishedBy>
         where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>
         where TUnitClaim : ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>
@@ -228,6 +229,39 @@ namespace Librame.Extensions.Content.Stores
         /// 当前窗格列表。
         /// </summary>
         protected IReadOnlyList<TPane> CurrentPanes { get; set; }
+
+
+        /// <summary>
+        /// 获取指定元素集合的累加增量标识。
+        /// </summary>
+        /// <typeparam name="TElement">指定的元素类型。</typeparam>
+        /// <param name="elements">给定的元素集合。</param>
+        /// <param name="elementName">给定要获取的元素名称。</param>
+        /// <param name="isElementFactory">验证是要获取的元素名称的工厂方法。</param>
+        /// <returns>返回 <typeparamref name="TIncremId"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        protected virtual TIncremId GetProgressiveIncremId<TElement>(IEnumerable<TElement> elements,
+            string elementName, Func<TElement, string, bool> isElementFactory)
+        {
+            var incremId = default(TIncremId);
+
+            if (elements.IsNull() || elementName.IsEmpty())
+                return incremId;
+
+            isElementFactory.NotNull(nameof(isElementFactory));
+
+            var index = 0;
+            foreach (var element in elements)
+            {
+                incremId = ProgressiveIncremId(index);
+                if (isElementFactory.Invoke(element, elementName))
+                    break;
+
+                index++;
+            }
+
+            return incremId;
+        }
 
 
         /// <summary>
@@ -305,8 +339,10 @@ namespace Librame.Extensions.Content.Stores
                     var category = categoryType.EnsureCreate<TCategory>();
 
                     category.Name = pair.Key;
-                    category.ParentId = GetParentId(pair.Value.parentName);
                     category.Description = pair.Value.description;
+
+                    category.ParentId = GetProgressiveIncremId(InitializationOptions.DefaultCategories,
+                        pair.Value.parentName, (pair, name) => pair.Value.parentName == name);
 
                     category.PopulateCreation(Clock);
 
@@ -322,16 +358,6 @@ namespace Librame.Extensions.Content.Stores
                     if (!Accessor.RequiredSaveChanges)
                         Accessor.RequiredSaveChanges = true;
                 });
-
-            // GetParentId
-            TIncremId GetParentId(string parentName)
-            {
-                if (parentName.IsEmpty())
-                    return default;
-
-                var category = Accessor.Categories.FirstOrDefault(p => p.Name == parentName);
-                return category.IsNotNull() ? category.Id : default;
-            }
         }
 
         /// <summary>
@@ -350,8 +376,10 @@ namespace Librame.Extensions.Content.Stores
                     var category = categoryType.EnsureCreate<TCategory>();
 
                     category.Name = pair.Key;
-                    category.ParentId = GetParentId(pair.Value.parentName);
                     category.Description = pair.Value.description;
+
+                    category.ParentId = GetProgressiveIncremId(InitializationOptions.DefaultCategories,
+                        pair.Value.parentName, (pair, name) => pair.Value.parentName == name);
 
                     return category;
                 })
@@ -371,16 +399,6 @@ namespace Librame.Extensions.Content.Stores
                         Accessor.RequiredSaveChanges = true;
                 },
                 cancellationToken);
-
-            // GetParentId
-            TIncremId GetParentId(string parentName)
-            {
-                if (parentName.IsEmpty())
-                    return default;
-
-                var category = Accessor.Categories.FirstOrDefault(p => p.Name == parentName);
-                return category.IsNotNull() ? category.Id : default;
-            }
         }
 
 
@@ -398,8 +416,10 @@ namespace Librame.Extensions.Content.Stores
                     var source = sourceType.EnsureCreate<TSource>();
 
                     source.Name = pair.Key;
-                    source.ParentId = GetParentId(pair.Value.parentName);
                     source.Description = pair.Value.description;
+
+                    source.ParentId = GetProgressiveIncremId(InitializationOptions.DefaultSources,
+                        pair.Value.parentName, (pair, name) => pair.Value.parentName == name);
 
                     source.PopulateCreation(Clock);
 
@@ -415,16 +435,6 @@ namespace Librame.Extensions.Content.Stores
                     if (!Accessor.RequiredSaveChanges)
                         Accessor.RequiredSaveChanges = true;
                 });
-
-            // GetParentId
-            TIncremId GetParentId(string parentName)
-            {
-                if (parentName.IsEmpty())
-                    return default;
-
-                var source = Accessor.Sources.FirstOrDefault(p => p.Name == parentName);
-                return source.IsNotNull() ? source.Id : default;
-            }
         }
 
         /// <summary>
@@ -443,8 +453,10 @@ namespace Librame.Extensions.Content.Stores
                     var source = sourceType.EnsureCreate<TSource>();
 
                     source.Name = pair.Key;
-                    source.ParentId = GetParentId(pair.Value.parentName);
                     source.Description = pair.Value.description;
+
+                    source.ParentId = GetProgressiveIncremId(InitializationOptions.DefaultSources,
+                        pair.Value.parentName, (pair, name) => pair.Value.parentName == name);
 
                     return source;
                 })
@@ -464,16 +476,6 @@ namespace Librame.Extensions.Content.Stores
                         Accessor.RequiredSaveChanges = true;
                 },
                 cancellationToken);
-
-            // GetParentId
-            TIncremId GetParentId(string parentName)
-            {
-                if (parentName.IsEmpty())
-                    return default;
-
-                var source = Accessor.Sources.FirstOrDefault(p => p.Name == parentName);
-                return source.IsNotNull() ? source.Id : default;
-            }
         }
 
 
@@ -491,7 +493,10 @@ namespace Librame.Extensions.Content.Stores
                     var claim = claimType.EnsureCreate<TClaim>();
 
                     claim.Name = pair.Key;
-                    claim.Description = pair.Value;
+                    claim.Description = pair.Value.description;
+
+                    claim.CategoryId = GetProgressiveIncremId(InitializationOptions.DefaultCategories,
+                        pair.Value.categoryName, (pair, name) => pair.Key == name);
 
                     claim.PopulateCreation(Clock);
 
@@ -525,7 +530,10 @@ namespace Librame.Extensions.Content.Stores
                     var claim = claimType.EnsureCreate<TClaim>();
 
                     claim.Name = pair.Key;
-                    claim.Description = pair.Value;
+                    claim.Description = pair.Value.description;
+
+                    claim.CategoryId = GetProgressiveIncremId(InitializationOptions.DefaultCategories,
+                        pair.Value.categoryName, (pair, name) => pair.Key == name);
 
                     return claim;
                 })
@@ -845,8 +853,10 @@ namespace Librame.Extensions.Content.Stores
                     var pane = paneType.EnsureCreate<TPane>();
 
                     pane.Name = pair.Key;
-                    pane.ParentId = GetParentId(pair.Value.parentName);
                     pane.Description = pair.Value.description;
+
+                    pane.ParentId = GetProgressiveIncremId(defaultPanes,
+                        pair.Value.parentName, (pair, name) => pair.Value.parentName == name);
 
                     pane.PopulateCreation(Clock);
 
@@ -893,16 +903,6 @@ namespace Librame.Extensions.Content.Stores
                     if (!Accessor.RequiredSaveChanges)
                         Accessor.RequiredSaveChanges = true;
                 });
-
-            // GetParentId
-            TIncremId GetParentId(string parentName)
-            {
-                if (parentName.IsEmpty())
-                    return default;
-
-                var pane = Accessor.Panes.FirstOrDefault(p => p.Name == parentName);
-                return pane.IsNotNull() ? pane.Id : default;
-            }
         }
 
         /// <summary>
@@ -923,8 +923,10 @@ namespace Librame.Extensions.Content.Stores
                     var pane = paneType.EnsureCreate<TPane>();
 
                     pane.Name = pair.Key;
-                    pane.ParentId = GetParentId(pair.Value.parentName);
                     pane.Description = pair.Value.description;
+
+                    pane.ParentId = GetProgressiveIncremId(defaultPanes,
+                        pair.Value.parentName, (pair, name) => pair.Value.parentName == name);
 
                     return pane;
                 })
@@ -975,16 +977,6 @@ namespace Librame.Extensions.Content.Stores
                         Accessor.RequiredSaveChanges = true;
                 },
                 cancellationToken);
-
-            // GetParentId
-            TIncremId GetParentId(string parentName)
-            {
-                if (parentName.IsEmpty())
-                    return default;
-
-                var pane = Accessor.Panes.FirstOrDefault(p => p.Name == parentName);
-                return pane.IsNotNull() ? pane.Id : default;
-            }
         }
 
     }

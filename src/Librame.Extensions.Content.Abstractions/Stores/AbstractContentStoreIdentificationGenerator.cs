@@ -47,7 +47,7 @@ namespace Librame.Extensions.Content.Stores
         /// </summary>
         /// <returns>返回 <typeparamref name="TId"/>。</returns>
         public virtual TId GenerateUnitId()
-            => GenerateId<TId>("UnitId");
+            => GenerateId("UnitId");
 
         /// <summary>
         /// 异步生成单元标识。
@@ -55,6 +55,6 @@ namespace Librame.Extensions.Content.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TId"/> 的异步操作。</returns>
         public virtual Task<TId> GenerateUnitIdAsync(CancellationToken cancellationToken = default)
-            => GenerateIdAsync<TId>("UnitId", cancellationToken);
+            => GenerateIdAsync("UnitId", cancellationToken);
     }
 }

@@ -11,7 +11,7 @@
 #endregion
 
 using GraphQL.Types;
-using Microsoft.AspNetCore.Content;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;
@@ -24,7 +24,7 @@ namespace Librame.AspNetCore.Content.Api
 {
     using AspNetCore.Api;
     using AspNetCore.Content.Api.Models;
-    using AspNetCore.Content.Api.ModelTypes;
+    using AspNetCore.Content.Api.Types;
     using AspNetCore.Content.Api.Resources;
     using AspNetCore.Content.Stores;
     using Extensions;

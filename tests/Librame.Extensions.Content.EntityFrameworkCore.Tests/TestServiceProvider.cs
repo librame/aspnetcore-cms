@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Design.Internal;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using Pomelo.EntityFrameworkCore.MySql.Update.Internal;
 using System;
 
 namespace Librame.Extensions.Content.Tests
@@ -39,10 +37,6 @@ namespace Librame.Extensions.Content.Tests
                 })
                 .AddAccessor<ContentDbContextAccessor>((tenant, optionsBuilder) =>
                 {
-                    optionsBuilder.ReplaceService<IModificationCommandBatchFactory,
-                        MySqlModificationCommandBatchFactoryRewrite>();
-                    //optionsBuilder.ReplaceService<IBatchExecutor, MySqlBatchExecutorRewrite>();
-
                     optionsBuilder.UseMySql(tenant.DefaultConnectionString, mySql =>
                     {
                         mySql.MigrationsAssembly(typeof(ContentDbContextAccessor).GetAssemblyDisplayName());

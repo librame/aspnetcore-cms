@@ -179,7 +179,8 @@ namespace Librame.Extensions.Portal.Stores
         /// 门户存储标识生成器。
         /// </summary>
         /// <value>返回 <see cref="IPortalStoreIdentificationGenerator{TGenId}"/>。</value>
-        protected IPortalStoreIdentificationGenerator<TGenId> PortalGenerator { get; }
+        protected IPortalStoreIdentificationGenerator<TGenId> PortalGenerator
+            => Generator as IPortalStoreIdentificationGenerator<TGenId>;
 
 
         /// <summary>

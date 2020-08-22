@@ -124,7 +124,7 @@ namespace Librame.Extensions.Portal.Stores
         : ContentPortalStoreInitializer<TAccessor,
             ContentCategory<TIncremId, TPublishedBy>,
             ContentSource<TIncremId, TPublishedBy>,
-            ContentClaim<TIncremId, TPublishedBy>,
+            ContentClaim<TIncremId, TIncremId, TPublishedBy>,
             ContentTag<TIncremId, TPublishedBy>,
             ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>,
             ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>,
@@ -191,7 +191,7 @@ namespace Librame.Extensions.Portal.Stores
             IDataAccessor<TGenId, TIncremId, TPublishedBy>
         where TCategory : ContentCategory<TIncremId, TPublishedBy>
         where TSource : ContentSource<TIncremId, TPublishedBy>
-        where TClaim : ContentClaim<TIncremId, TPublishedBy>
+        where TClaim : ContentClaim<TIncremId, TIncremId, TPublishedBy>
         where TTag : ContentTag<TIncremId, TPublishedBy>
         where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>
         where TUnitClaim : ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>
@@ -239,7 +239,8 @@ namespace Librame.Extensions.Portal.Stores
         /// 门户存储标识生成器。
         /// </summary>
         /// <value>返回 <see cref="IPortalStoreIdentificationGenerator{TGenId}"/>。</value>
-        protected IPortalStoreIdentificationGenerator<TGenId> PortalGenerator { get; }
+        protected IPortalStoreIdentificationGenerator<TGenId> PortalGenerator
+            => Generator as IPortalStoreIdentificationGenerator<TGenId>;
 
 
         /// <summary>

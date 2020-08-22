@@ -36,7 +36,7 @@ namespace Librame.Extensions.Content.Accessors
     public interface IContentAccessor<TGenId, TIncremId, TPublishedBy>
         : IContentAccessor<ContentCategory<TIncremId, TPublishedBy>,
             ContentSource<TIncremId, TPublishedBy>,
-            ContentClaim<TIncremId, TPublishedBy>,
+            ContentClaim<TIncremId, TIncremId, TPublishedBy>,
             ContentTag<TIncremId, TPublishedBy>,
             ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>,
             ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>,

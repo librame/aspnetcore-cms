@@ -10,24 +10,21 @@
 
 #endregion
 
-namespace Librame.AspNetCore.Content.Api.ModelTypes
+namespace Librame.AspNetCore.Content.Api.Models
 {
-    using AspNetCore.Api;
-    using AspNetCore.Content.Api.Models;
-
     /// <summary>
-    /// 分类类型。
+    /// 单元标签模型。
     /// </summary>
-    public class CategoryType : ApiModelGraphTypeBase<CategoryApiModel>
+    public class UnitTagModel
     {
-        /// <summary>
-        /// 构造一个 <see cref="CategoryType"/> 实例。
-        /// </summary>
-        public CategoryType()
-            : base()
-        {
-            this.AddCategoryApiModelFields();
-        }
+        ///// <summary>
+        ///// 单元模型。
+        ///// </summary>
+        //public UnitModel Unit { get; set; }
 
+        /// <summary>
+        /// 标签模型。
+        /// </summary>
+        public TagModel Tag { get; set; }
     }
 }

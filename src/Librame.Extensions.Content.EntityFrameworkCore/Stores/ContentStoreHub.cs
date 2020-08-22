@@ -66,7 +66,7 @@ namespace Librame.Extensions.Content.Stores
         : ContentStoreHub<TAccessor,
             ContentCategory<TIncremId, TPublishedBy>,
             ContentSource<TIncremId, TPublishedBy>,
-            ContentClaim<TIncremId, TPublishedBy>,
+            ContentClaim<TIncremId, TIncremId, TPublishedBy>,
             ContentTag<TIncremId, TPublishedBy>,
             ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>,
             ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>,
@@ -116,7 +116,7 @@ namespace Librame.Extensions.Content.Stores
             IDataAccessor<TGenId, TIncremId, TPublishedBy>
         where TCategory : ContentCategory<TIncremId, TPublishedBy>
         where TSource : ContentSource<TIncremId, TPublishedBy>
-        where TClaim : ContentClaim<TIncremId, TPublishedBy>
+        where TClaim : ContentClaim<TIncremId, TIncremId, TPublishedBy>
         where TTag : ContentTag<TIncremId, TPublishedBy>
         where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>
         where TUnitClaim : ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>

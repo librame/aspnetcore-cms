@@ -51,7 +51,7 @@ namespace Librame.Extensions.Content.Accessors
             (this ModelBuilder modelBuilder, ContentDbContextAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TGenId, TIncremId, TPublishedBy> accessor)
             where TCategory : ContentCategory<TIncremId, TPublishedBy>
             where TSource : ContentSource<TIncremId, TPublishedBy>
-            where TClaim : ContentClaim<TIncremId, TPublishedBy>
+            where TClaim : ContentClaim<TIncremId, TIncremId, TPublishedBy>
             where TTag : ContentTag<TIncremId, TPublishedBy>
             where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>
             where TUnitClaim : ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>
@@ -89,7 +89,7 @@ namespace Librame.Extensions.Content.Accessors
             (this ModelBuilder modelBuilder, DbContextAccessorBase accessor)
             where TCategory : ContentCategory<TIncremId, TPublishedBy>
             where TSource : ContentSource<TIncremId, TPublishedBy>
-            where TClaim : ContentClaim<TIncremId, TPublishedBy>
+            where TClaim : ContentClaim<TIncremId, TIncremId, TPublishedBy>
             where TTag : ContentTag<TIncremId, TPublishedBy>
             where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>
             where TUnitClaim : ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>

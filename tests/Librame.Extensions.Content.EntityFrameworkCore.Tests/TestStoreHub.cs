@@ -22,7 +22,7 @@ namespace Librame.Extensions.Content.Tests
         public IList<ContentSource<int, Guid>> GetSources()
             => Accessor.Sources.ToList();
 
-        public IList<ContentClaim<int, Guid>> GetClaims()
+        public IList<ContentClaim<int, int, Guid>> GetClaims()
             => Accessor.Claims.ToList();
 
         public IList<ContentTag<int, Guid>> GetTags()

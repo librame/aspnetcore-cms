@@ -47,7 +47,7 @@ namespace Librame.Extensions.Portal.Stores
         /// </summary>
         /// <returns>返回 <typeparamref name="TId"/>。</returns>
         public virtual TId GenerateEditorId()
-            => GenerateId<TId>("EditorId");
+            => GenerateId("EditorId");
 
         /// <summary>
         /// 异步生成编者标识。
@@ -55,7 +55,7 @@ namespace Librame.Extensions.Portal.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TId"/> 的异步操作。</returns>
         public virtual Task<TId> GenerateEditorIdAsync(CancellationToken cancellationToken = default)
-            => GenerateIdAsync<TId>("EditorId", cancellationToken);
+            => GenerateIdAsync("EditorId", cancellationToken);
 
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Librame.Extensions.Portal.Stores
         /// </summary>
         /// <returns>返回 <typeparamref name="TId"/>。</returns>
         public virtual TId GenerateInternalUserId()
-            => GenerateId<TId>("InternalUserId");
+            => GenerateId("InternalUserId");
 
         /// <summary>
         /// 异步生成内置用户标识。
@@ -71,6 +71,6 @@ namespace Librame.Extensions.Portal.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TId"/> 的异步操作。</returns>
         public virtual Task<TId> GenerateInternalUserIdAsync(CancellationToken cancellationToken = default)
-            => GenerateIdAsync<TId>("InternalUserId", cancellationToken);
+            => GenerateIdAsync("InternalUserId", cancellationToken);
     }
 }

@@ -13,6 +13,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Content.Stores
 {
@@ -23,12 +24,20 @@ namespace Librame.Extensions.Content.Stores
     /// 内容声明。
     /// </summary>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+    /// <typeparam name="TCategoryId">指定的分类标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("内容声明")]
-    public class ContentClaim<TIncremId, TCreatedBy> : AbstractIdentifierEntityCreation<TIncremId, TCreatedBy>
+    public class ContentClaim<TIncremId, TCategoryId, TCreatedBy> : AbstractIdentifierEntityCreation<TIncremId, TCreatedBy>
         where TIncremId : IEquatable<TIncremId>
+        where TCategoryId : IEquatable<TCategoryId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {
+        /// <summary>
+        /// 分类标识。
+        /// </summary>
+        [Display(Name = nameof(CategoryId), ResourceType = typeof(AbstractContentResource))]
+        public virtual TCategoryId CategoryId { get; set; }
+
         /// <summary>
         /// 名称。
         /// </summary>
@@ -45,10 +54,11 @@ namespace Librame.Extensions.Content.Stores
         /// <summary>
         /// 除主键外的唯一索引相等比较（参见实体映射的唯一索引配置）。
         /// </summary>
-        /// <param name="other">给定的 <see cref="ContentClaim{TIncremId, TCreatedBy}"/>。</param>
+        /// <param name="other">给定的 <see cref="ContentClaim{TIncremId, TCategoryId, TCreatedBy}"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public virtual bool Equals(ContentClaim<TIncremId, TCreatedBy> other)
-            => Name == other?.Name;
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public virtual bool Equals(ContentClaim<TIncremId, TCategoryId, TCreatedBy> other)
+            => other.IsNotNull() && CategoryId.Equals(other.CategoryId) && Name == other.Name;
 
         /// <summary>
         /// 重写是否相等。
@@ -56,7 +66,7 @@ namespace Librame.Extensions.Content.Stores
         /// <param name="obj">给定要比较的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is ContentClaim<TIncremId, TCreatedBy> other) && Equals(other);
+            => (obj is ContentClaim<TIncremId, TCategoryId, TCreatedBy> other) && Equals(other);
 
 
         /// <summary>
@@ -64,7 +74,7 @@ namespace Librame.Extensions.Content.Stores
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => Name.CompatibleGetHashCode();
+            => CategoryId.GetHashCode() ^ Name.CompatibleGetHashCode();
 
 
         /// <summary>
@@ -72,6 +82,6 @@ namespace Librame.Extensions.Content.Stores
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => $"{base.ToString()};{nameof(Name)}={Name}";
+            => $"{base.ToString()};{nameof(CategoryId)}={CategoryId};{nameof(Name)}={Name}";
     }
 }
