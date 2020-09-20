@@ -68,12 +68,12 @@ namespace Librame.Extensions.Content.Stores
             ContentSource<TIncremId, TPublishedBy>,
             ContentClaim<TIncremId, TIncremId, TPublishedBy>,
             ContentTag<TIncremId, TPublishedBy>,
-            ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>,
+            ContentUnit<TGenId, TIncremId, TIncremId, TIncremId, TPublishedBy>,
             ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>,
             ContentUnitTag<TIncremId, TGenId, TIncremId>,
             ContentUnitVisitCount<TGenId>,
             ContentPane<TIncremId, TPublishedBy>,
-            ContentPaneUnit<TIncremId, TIncremId, TGenId, TPublishedBy>,
+            ContentPaneClaim<TIncremId, TIncremId, TIncremId, TPublishedBy>,
             TGenId, TIncremId, TPublishedBy>
         where TAccessor : ContentDbContextAccessor<TGenId, TIncremId, TPublishedBy>
         where TGenId : IEquatable<TGenId>
@@ -96,34 +96,34 @@ namespace Librame.Extensions.Content.Stores
     /// 内容存储中心。
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
-    /// <typeparam name="TCategory">指定的内容分类类型。</typeparam>
-    /// <typeparam name="TSource">指定的内容来源类型。</typeparam>
-    /// <typeparam name="TClaim">指定的内容声明类型。</typeparam>
-    /// <typeparam name="TTag">指定的内容标签类型。</typeparam>
-    /// <typeparam name="TUnit">指定的内容单元类型。</typeparam>
-    /// <typeparam name="TUnitClaim">指定的内容单元声明类型。</typeparam>
-    /// <typeparam name="TUnitTag">指定的内容单元标签类型。</typeparam>
-    /// <typeparam name="TUnitVisitCount">指定的内容单元统计数据类型。</typeparam>
-    /// <typeparam name="TPane">指定的内容窗格类型。</typeparam>
-    /// <typeparam name="TPaneUnit">指定的内容窗格单元类型。</typeparam>
+    /// <typeparam name="TCategory">指定的类别类型。</typeparam>
+    /// <typeparam name="TSource">指定的来源类型。</typeparam>
+    /// <typeparam name="TClaim">指定的声明类型。</typeparam>
+    /// <typeparam name="TTag">指定的标签类型。</typeparam>
+    /// <typeparam name="TUnit">指定的单元类型。</typeparam>
+    /// <typeparam name="TUnitClaim">指定的单元声明类型。</typeparam>
+    /// <typeparam name="TUnitTag">指定的单元标签类型。</typeparam>
+    /// <typeparam name="TUnitVisitCount">指定的单元统计数据类型。</typeparam>
+    /// <typeparam name="TPane">指定的窗格类型。</typeparam>
+    /// <typeparam name="TPaneClaim">指定的窗格声明类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
-    public class ContentStoreHub<TAccessor, TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TGenId, TIncremId, TPublishedBy>
+    public class ContentStoreHub<TAccessor, TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim, TGenId, TIncremId, TPublishedBy>
         : DataStoreHub<TAccessor, TGenId, TIncremId, TPublishedBy>,
-        IContentStoreHub<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit>
-        where TAccessor : class, IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit>,
+        IContentStoreHub<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim>
+        where TAccessor : class, IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim>,
             IDataAccessor<TGenId, TIncremId, TPublishedBy>
         where TCategory : ContentCategory<TIncremId, TPublishedBy>
         where TSource : ContentSource<TIncremId, TPublishedBy>
         where TClaim : ContentClaim<TIncremId, TIncremId, TPublishedBy>
         where TTag : ContentTag<TIncremId, TPublishedBy>
-        where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>
+        where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TIncremId, TPublishedBy>
         where TUnitClaim : ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>
         where TUnitTag : ContentUnitTag<TIncremId, TGenId, TIncremId>
         where TUnitVisitCount : ContentUnitVisitCount<TGenId>
         where TPane : ContentPane<TIncremId, TPublishedBy>
-        where TPaneUnit : ContentPaneUnit<TIncremId, TIncremId, TGenId, TPublishedBy>
+        where TPaneClaim : ContentPaneClaim<TIncremId, TIncremId, TIncremId, TPublishedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TPublishedBy : IEquatable<TPublishedBy>
@@ -139,28 +139,28 @@ namespace Librame.Extensions.Content.Stores
 
 
         /// <summary>
-        /// 内容分类查询。
+        /// 类别查询。
         /// </summary>
         /// <value>返回 <see cref="IQueryable{TCategory}"/>。</value>
         public IQueryable<TCategory> Categories
             => Accessor.Categories;
 
         /// <summary>
-        /// 内容来源查询。
+        /// 来源查询。
         /// </summary>
         /// <value>返回 <see cref="IQueryable{TSource}"/>。</value>
         public IQueryable<TSource> Sources
             => Accessor.Sources;
 
         /// <summary>
-        /// 内容声明查询。
+        /// 声明查询。
         /// </summary>
         /// <value>返回 <see cref="IQueryable{TClaim}"/>。</value>
         public IQueryable<TClaim> Claims
             => Accessor.Claims;
 
         /// <summary>
-        /// 内容标签查询。
+        /// 标签查询。
         /// </summary>
         public IQueryable<TTag> Tags
             => Accessor.Tags;
@@ -201,10 +201,10 @@ namespace Librame.Extensions.Content.Stores
             => Accessor.Panes;
 
         /// <summary>
-        /// 单元窗格单元查询。
+        /// 单元窗格声明查询。
         /// </summary>
         /// <value>返回 <see cref="IQueryable{TPaneUnit}"/>。</value>
-        public IQueryable<TPaneUnit> PaneUnits
-            => Accessor.PaneUnits;
+        public IQueryable<TPaneClaim> PaneClaims
+            => Accessor.PaneClaims;
     }
 }

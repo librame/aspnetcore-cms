@@ -27,6 +27,7 @@ namespace Librame.Extensions.Content.Stores
     using Data.Accessors;
     using Data.Stores;
     using Data.Validators;
+    using System.Globalization;
 
     /// <summary>
     /// 内容存储初始化器。
@@ -103,12 +104,12 @@ namespace Librame.Extensions.Content.Stores
             ContentSource<TIncremId, TPublishedBy>,
             ContentClaim<TIncremId, TIncremId, TPublishedBy>,
             ContentTag<TIncremId, TPublishedBy>,
-            ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>,
+            ContentUnit<TGenId, TIncremId, TIncremId, TIncremId, TPublishedBy>,
             ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>,
             ContentUnitTag<TIncremId, TGenId, TIncremId>,
             ContentUnitVisitCount<TGenId>,
             ContentPane<TIncremId, TPublishedBy>,
-            ContentPaneUnit<TIncremId, TIncremId, TGenId, TPublishedBy>,
+            ContentPaneClaim<TIncremId, TIncremId, TIncremId, TPublishedBy>,
             TGenId, TIncremId, TPublishedBy>
         where TAccessor : class, IContentAccessor<TGenId, TIncremId, TPublishedBy>,
             IDataAccessor<TGenId, TIncremId, TPublishedBy>
@@ -136,33 +137,33 @@ namespace Librame.Extensions.Content.Stores
     /// 内容存储初始化器。
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
-    /// <typeparam name="TCategory">指定的内容分类类型。</typeparam>
-    /// <typeparam name="TSource">指定的内容来源类型。</typeparam>
-    /// <typeparam name="TClaim">指定的内容声明类型。</typeparam>
-    /// <typeparam name="TTag">指定的内容标签类型。</typeparam>
-    /// <typeparam name="TUnit">指定的内容单元类型。</typeparam>
-    /// <typeparam name="TUnitClaim">指定的内容单元声明类型。</typeparam>
-    /// <typeparam name="TUnitTag">指定的内容单元标签类型。</typeparam>
-    /// <typeparam name="TUnitVisitCount">指定的内容单元访问计数类型。</typeparam>
-    /// <typeparam name="TPane">指定的内容窗格类型。</typeparam>
-    /// <typeparam name="TPaneUnit">指定的内容单元类型。</typeparam>
+    /// <typeparam name="TCategory">指定的类别类型。</typeparam>
+    /// <typeparam name="TSource">指定的来源类型。</typeparam>
+    /// <typeparam name="TClaim">指定的声明类型。</typeparam>
+    /// <typeparam name="TTag">指定的标签类型。</typeparam>
+    /// <typeparam name="TUnit">指定的单元类型。</typeparam>
+    /// <typeparam name="TUnitClaim">指定的单元声明类型。</typeparam>
+    /// <typeparam name="TUnitTag">指定的单元标签类型。</typeparam>
+    /// <typeparam name="TUnitVisitCount">指定的单元访问计数类型。</typeparam>
+    /// <typeparam name="TPane">指定的窗格类型。</typeparam>
+    /// <typeparam name="TPaneClaim">指定的窗格声明类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
-    public class ContentStoreInitializer<TAccessor, TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TGenId, TIncremId, TPublishedBy>
+    public class ContentStoreInitializer<TAccessor, TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim, TGenId, TIncremId, TPublishedBy>
         : DataStoreInitializer<TAccessor, TGenId, TIncremId, TPublishedBy>
-        where TAccessor : class, IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit>,
+        where TAccessor : class, IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim>,
             IDataAccessor<TGenId, TIncremId, TPublishedBy>
         where TCategory : ContentCategory<TIncremId, TPublishedBy>
         where TSource : ContentSource<TIncremId, TPublishedBy>
         where TClaim : ContentClaim<TIncremId, TIncremId, TPublishedBy>
         where TTag : ContentTag<TIncremId, TPublishedBy>
-        where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>
+        where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TIncremId, TPublishedBy>
         where TUnitClaim : ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>
         where TUnitTag : ContentUnitTag<TIncremId, TGenId, TIncremId>
         where TUnitVisitCount : ContentUnitVisitCount<TGenId>
         where TPane : ContentPane<TIncremId, TPublishedBy>
-        where TPaneUnit : ContentPaneUnit<TIncremId, TIncremId, TGenId, TPublishedBy>
+        where TPaneClaim : ContentPaneClaim<TIncremId, TIncremId, TIncremId, TPublishedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TPublishedBy : IEquatable<TPublishedBy>
@@ -201,7 +202,7 @@ namespace Librame.Extensions.Content.Stores
 
 
         /// <summary>
-        /// 当前分类列表。
+        /// 当前类别列表。
         /// </summary>
         protected IReadOnlyList<TCategory> CurrentCategories { get; set; }
 
@@ -326,7 +327,7 @@ namespace Librame.Extensions.Content.Stores
 
 
         /// <summary>
-        /// 初始化分类集合。
+        /// 初始化类别集合。
         /// </summary>
         protected virtual void InitializeCategories()
         {
@@ -361,7 +362,7 @@ namespace Librame.Extensions.Content.Stores
         }
 
         /// <summary>
-        /// 异步初始化分类集合。
+        /// 异步初始化类别集合。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个异步操作。</returns>
@@ -630,6 +631,8 @@ namespace Librame.Extensions.Content.Stores
         /// </summary>
         protected virtual void InitializeUnits()
         {
+            var unitClaims = GetUnitClaims();
+
             if (CurrentUnits.IsEmpty())
             {
                 var unitType = typeof(TUnit);
@@ -641,7 +644,7 @@ namespace Librame.Extensions.Content.Stores
                 var categoryIndex = 0;
                 foreach (var category in CurrentCategories)
                 {
-                    foreach (var claim in CurrentClaims)
+                    foreach (var claim in unitClaims)
                     {
                         var unit = unitType.EnsureCreate<TUnit>();
 
@@ -653,7 +656,6 @@ namespace Librame.Extensions.Content.Stores
 
                         unit.Title = $"测试{category.Name}{claim.Name}标题";
                         unit.Subtitle = $"测试{category.Name}{claim.Name}副标题";
-                        unit.Tags = $"测试,{category.Name}";
 
                         //unit.Reference = "/Reference";
                         unit.PublishedAs = $"/unit/{PublishedAsQueryValue(unit.Id, unit.CreatedTime)}";
@@ -680,7 +682,7 @@ namespace Librame.Extensions.Content.Stores
                     {
                         // AddUnitClaims
                         var claimIndex = 0;
-                        foreach (var claim in CurrentClaims)
+                        foreach (var claim in unitClaims)
                         {
                             var unitClaim = unitClaimType.EnsureCreate<TUnitClaim>();
 
@@ -736,6 +738,8 @@ namespace Librame.Extensions.Content.Stores
         /// <returns>返回一个异步操作。</returns>
         protected virtual async Task InitializeUnitsAsync(CancellationToken cancellationToken)
         {
+            var unitClaims = GetUnitClaims();
+
             if (CurrentUnits.IsEmpty())
             {
                 var unitType = typeof(TUnit);
@@ -747,7 +751,7 @@ namespace Librame.Extensions.Content.Stores
                 var categoryIndex = 0;
                 foreach (var category in CurrentCategories)
                 {
-                    foreach (var claim in CurrentClaims)
+                    foreach (var claim in unitClaims)
                     {
                         var unit = unitType.EnsureCreate<TUnit>();
 
@@ -759,7 +763,6 @@ namespace Librame.Extensions.Content.Stores
 
                         unit.Title = $"测试{category.Name}{claim.Name}标题";
                         unit.Subtitle = $"测试{category.Name}{claim.Name}副标题";
-                        unit.Tags = $"测试,{category.Name}";
 
                         //unit.Reference = "/Reference";
                         unit.PublishedAs = $"/unit/{PublishedAsQueryValue(unit.Id, unit.CreatedTime)}";
@@ -786,7 +789,7 @@ namespace Librame.Extensions.Content.Stores
                     {
                         // AddUnitClaims
                         var claimIndex = 0;
-                        foreach (var claim in CurrentClaims)
+                        foreach (var claim in unitClaims)
                         {
                             var unitClaim = unitClaimType.EnsureCreate<TUnitClaim>();
 
@@ -842,20 +845,20 @@ namespace Librame.Extensions.Content.Stores
         /// </summary>
         protected virtual void InitializePanes()
         {
-            var defaultPanes = InitializationOptions.DefaultPanes;
+            var paneClaims = GetPaneClaims();
 
             if (CurrentPanes.IsEmpty())
             {
                 var paneType = typeof(TPane);
 
-                CurrentPanes = defaultPanes.Select(pair =>
+                CurrentPanes = InitializationOptions.DefaultPanes.Select(pair =>
                 {
                     var pane = paneType.EnsureCreate<TPane>();
 
                     pane.Name = pair.Key;
                     pane.Description = pair.Value.description;
 
-                    pane.ParentId = GetProgressiveIncremId(defaultPanes,
+                    pane.ParentId = GetProgressiveIncremId(InitializationOptions.DefaultPanes,
                         pair.Value.parentName, (pair, name) => pair.Value.parentName == name);
 
                     pane.PopulateCreation(Clock);
@@ -868,29 +871,36 @@ namespace Librame.Extensions.Content.Stores
             Accessor.PanesManager.TryAddRange(p => p.Equals(CurrentPanes[0]),
                 () =>
                 {
-                    // AddPaneUnits
-                    var paneUnitType = typeof(TPaneUnit);
-
-                    var allUnitIds = CurrentUnits.Select(s => s.Id).ToList();
-                    var paneUnitIdsCount = allUnitIds.Count / defaultPanes.Count;
+                    // AddPaneClaims
+                    var paneClaimType = typeof(TPaneClaim);
 
                     var paneIndex = 0;
                     foreach (var pane in CurrentPanes)
                     {
-                        for (var i = 0; i < paneUnitIdsCount; i++)
+                        var claimIndex = 0;
+                        foreach (var claim in paneClaims)
                         {
-                            var paneUnit = paneUnitType.EnsureCreate<TPaneUnit>();
+                            var paneClaim = paneClaimType.EnsureCreate<TPaneClaim>();
 
-                            var unitIndex = paneIndex * paneUnitIdsCount + i;
-                            paneUnit.UnitId = CurrentUnits[unitIndex].Id;
+                            paneClaim.ClaimId = claim.Id.Equals(_defaultIncremId)
+                                ? ProgressiveIncremId(claimIndex)
+                                : claim.Id;
 
-                            paneUnit.PaneId = pane.Id.Equals(_defaultIncremId)
+                            paneClaim.PaneId = pane.Id.Equals(_defaultIncremId)
                                 ? ProgressiveIncremId(paneIndex)
                                 : pane.Id;
 
-                            paneUnit.PopulateCreation(Clock);
+                            // 总数声明
+                            if (IsTotalClaim(claim))
+                            {
+                                paneClaim.ClaimValue = InitializationOptions.DefaultTotal
+                                    .ToString(CultureInfo.InvariantCulture);
+                            }
 
-                            Accessor.PaneUnits.Add(paneUnit);
+                            paneClaim.PopulateCreation(Clock);
+
+                            Accessor.PaneClaims.Add(paneClaim);
+                            claimIndex++;
                         }
 
                         paneIndex++;
@@ -912,20 +922,20 @@ namespace Librame.Extensions.Content.Stores
         /// <returns>返回一个异步操作。</returns>
         protected virtual Task InitializePanesAsync(CancellationToken cancellationToken)
         {
-            var defaultPanes = InitializationOptions.DefaultPanes;
+            var paneClaims = GetPaneClaims();
 
             if (CurrentPanes.IsEmpty())
             {
                 var paneType = typeof(TPane);
 
-                CurrentPanes = defaultPanes.Select(pair =>
+                CurrentPanes = InitializationOptions.DefaultPanes.Select(pair =>
                 {
                     var pane = paneType.EnsureCreate<TPane>();
 
                     pane.Name = pair.Key;
                     pane.Description = pair.Value.description;
 
-                    pane.ParentId = GetProgressiveIncremId(defaultPanes,
+                    pane.ParentId = GetProgressiveIncremId(InitializationOptions.DefaultPanes,
                         pair.Value.parentName, (pair, name) => pair.Value.parentName == name);
 
                     return pane;
@@ -941,29 +951,36 @@ namespace Librame.Extensions.Content.Stores
             return Accessor.PanesManager.TryAddRangeAsync(p => p.Equals(CurrentPanes[0]),
                 async () =>
                 {
-                    // AddPaneUnits
-                    var paneUnitType = typeof(TPaneUnit);
-
-                    var allUnitIds = CurrentUnits.Select(s => s.Id).ToList();
-                    var paneUnitIdsCount = allUnitIds.Count / defaultPanes.Count;
+                    // AddPaneClaims
+                    var paneClaimType = typeof(TPaneClaim);
 
                     var paneIndex = 0;
                     foreach (var pane in CurrentPanes)
                     {
-                        for (var i = 0; i < paneUnitIdsCount; i++)
+                        var claimIndex = 0;
+                        foreach (var claim in paneClaims)
                         {
-                            var paneUnit = paneUnitType.EnsureCreate<TPaneUnit>();
+                            var paneClaim = paneClaimType.EnsureCreate<TPaneClaim>();
 
-                            var unitIndex = paneIndex * paneUnitIdsCount + i;
-                            paneUnit.UnitId = CurrentUnits[unitIndex].Id;
+                            paneClaim.ClaimId = claim.Id.Equals(_defaultIncremId)
+                                ? ProgressiveIncremId(claimIndex)
+                                : claim.Id;
 
-                            paneUnit.PaneId = pane.Id.Equals(_defaultIncremId)
+                            paneClaim.PaneId = pane.Id.Equals(_defaultIncremId)
                                 ? ProgressiveIncremId(paneIndex)
                                 : pane.Id;
 
-                            await paneUnit.PopulateCreationAsync(Clock, cancellationToken).ConfigureAwait();
+                            // 总数声明
+                            if (IsTotalClaim(claim))
+                            {
+                                paneClaim.ClaimValue = InitializationOptions.DefaultTotal
+                                    .ToString(CultureInfo.InvariantCulture);
+                            }
 
-                            await Accessor.PaneUnits.AddAsync(paneUnit, cancellationToken).ConfigureAwait();
+                            await paneClaim.PopulateCreationAsync(Clock, cancellationToken).ConfigureAwait();
+
+                            await Accessor.PaneClaims.AddAsync(paneClaim, cancellationToken).ConfigureAwait();
+                            claimIndex++;
                         }
 
                         paneIndex++;
@@ -978,6 +995,29 @@ namespace Librame.Extensions.Content.Stores
                 },
                 cancellationToken);
         }
+
+
+        /// <summary>
+        /// 获取窗格声明集合。
+        /// </summary>
+        /// <returns>返回 <see cref="IEnumerable{TClaim}"/>。</returns>
+        protected virtual IEnumerable<TClaim> GetPaneClaims()
+            => CurrentClaims.Skip(1).Take(2); // 当前窗格有效声明包括模板、总数
+
+        /// <summary>
+        /// 获取单元声明集合。
+        /// </summary>
+        /// <returns>返回 <see cref="IEnumerable{TClaim}"/>。</returns>
+        protected virtual IEnumerable<TClaim> GetUnitClaims()
+            => CurrentClaims.Take(2); // 当前单元有效声明包括正文、模板
+
+        /// <summary>
+        /// 是总数声明。
+        /// </summary>
+        /// <param name="claim">给定的 <typeparamref name="TClaim"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        protected virtual bool IsTotalClaim(TClaim claim)
+            => claim?.Name == InitializationOptions.DefaultClaims.Keys.ElementAt(2);
 
     }
 }

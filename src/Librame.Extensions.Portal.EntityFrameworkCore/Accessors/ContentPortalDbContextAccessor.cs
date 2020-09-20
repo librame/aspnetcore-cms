@@ -57,7 +57,7 @@ namespace Librame.Extensions.Portal.Accessors
             ContentUnitTag<TIncremId, TGenId, TIncremId>,
             ContentUnitVisitCount<TGenId>,
             ContentPane<TIncremId, TPublishedBy>,
-            ContentPaneUnit<TIncremId, TIncremId, TGenId, TPublishedBy>,
+            ContentPaneClaim<TIncremId, TIncremId, TGenId, TPublishedBy>,
             PortalEditor<TGenId, TUserId, TPublishedBy>,
             PortalInternalUser<TGenId, TPublishedBy>,
             TGenId, TIncremId, TUserId, TPublishedBy>,
@@ -83,16 +83,16 @@ namespace Librame.Extensions.Portal.Accessors
     /// <summary>
     /// 内容门户数据库上下文访问器。
     /// </summary>
-    /// <typeparam name="TCategory">指定的内容分类类型。</typeparam>
-    /// <typeparam name="TSource">指定的内容来源类型。</typeparam>
-    /// <typeparam name="TClaim">指定的内容声明类型。</typeparam>
-    /// <typeparam name="TTag">指定的内容标签类型。</typeparam>
-    /// <typeparam name="TUnit">指定的内容单元类型。</typeparam>
-    /// <typeparam name="TUnitClaim">指定的内容单元声明类型。</typeparam>
-    /// <typeparam name="TUnitTag">指定的内容单元标签类型。</typeparam>
-    /// <typeparam name="TUnitVisitCount">指定的内容单元统计数据类型。</typeparam>
-    /// <typeparam name="TPane">指定的内容窗格类型。</typeparam>
-    /// <typeparam name="TPaneUnit">指定的内容单元类型。</typeparam>
+    /// <typeparam name="TCategory">指定的类别类型。</typeparam>
+    /// <typeparam name="TSource">指定的来源类型。</typeparam>
+    /// <typeparam name="TClaim">指定的声明类型。</typeparam>
+    /// <typeparam name="TTag">指定的标签类型。</typeparam>
+    /// <typeparam name="TUnit">指定的单元类型。</typeparam>
+    /// <typeparam name="TUnitClaim">指定的单元声明类型。</typeparam>
+    /// <typeparam name="TUnitTag">指定的单元标签类型。</typeparam>
+    /// <typeparam name="TUnitVisitCount">指定的单元统计数据类型。</typeparam>
+    /// <typeparam name="TPane">指定的窗格类型。</typeparam>
+    /// <typeparam name="TPaneUnit">指定的单元类型。</typeparam>
     /// <typeparam name="TEditor">指定的编者类型。</typeparam>
     /// <typeparam name="TInternalUser">指定的内置用户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
@@ -111,7 +111,7 @@ namespace Librame.Extensions.Portal.Accessors
         where TUnitTag : ContentUnitTag<TIncremId, TGenId, TIncremId>
         where TUnitVisitCount : ContentUnitVisitCount<TGenId>
         where TPane : ContentPane<TIncremId, TPublishedBy>
-        where TPaneUnit : ContentPaneUnit<TIncremId, TIncremId, TGenId, TPublishedBy>
+        where TPaneUnit : ContentPaneClaim<TIncremId, TIncremId, TGenId, TPublishedBy>
         where TEditor : PortalEditor<TGenId, TUserId, TPublishedBy>
         where TInternalUser : PortalInternalUser<TGenId, TPublishedBy>
         where TGenId : IEquatable<TGenId>

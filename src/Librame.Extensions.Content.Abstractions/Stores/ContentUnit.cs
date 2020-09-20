@@ -22,26 +22,34 @@ namespace Librame.Extensions.Content.Stores
     using Data.Stores;
 
     /// <summary>
-    /// 内容单元。
+    /// 单元。
     /// </summary>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
-    /// <typeparam name="TCategoryId">指定的分类标识类型。</typeparam>
+    /// <typeparam name="TCategoryId">指定的类别标识类型。</typeparam>
+    /// <typeparam name="TPaneId">指定的窗格标识类型。</typeparam>
     /// <typeparam name="TSourceId">指定的来源标识类型。</typeparam>
     /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
-    [Description("内容单元")]
+    [Description("单元")]
     [Shardable]
-    public class ContentUnit<TGenId, TCategoryId, TSourceId, TPublishedBy>
+    public class ContentUnit<TGenId, TCategoryId, TPaneId, TSourceId, TPublishedBy>
         : AbstractIdentifierEntityPublication<TGenId, TPublishedBy>
         where TGenId : IEquatable<TGenId>
         where TCategoryId : IEquatable<TCategoryId>
+        where TPaneId : IEquatable<TPaneId>
         where TSourceId : IEquatable<TSourceId>
         where TPublishedBy : IEquatable<TPublishedBy>
     {
         /// <summary>
-        /// 分类标识。
+        /// 类别标识。
         /// </summary>
         [Display(Name = nameof(CategoryId), ResourceType = typeof(AbstractContentResource))]
         public virtual TCategoryId CategoryId { get; set; }
+
+        /// <summary>
+        /// 窗格标识。
+        /// </summary>
+        [Display(Name = nameof(PaneId), ResourceType = typeof(AbstractContentResource))]
+        public virtual TPaneId PaneId { get; set; }
 
         /// <summary>
         /// 来源标识。
@@ -62,12 +70,6 @@ namespace Librame.Extensions.Content.Stores
         public virtual string Subtitle { get; set; }
 
         /// <summary>
-        /// 标签集合。
-        /// </summary>
-        [Display(Name = nameof(Tags), ResourceType = typeof(AbstractContentResource))]
-        public virtual string Tags { get; set; }
-
-        /// <summary>
         /// 引用源。
         /// </summary>
         [Display(Name = nameof(Reference), ResourceType = typeof(AbstractContentResource))]
@@ -77,10 +79,10 @@ namespace Librame.Extensions.Content.Stores
         /// <summary>
         /// 除主键外的唯一索引相等比较（参见实体映射的唯一索引配置）。
         /// </summary>
-        /// <param name="other">给定的 <see cref="ContentUnit{TGenId, TCategoryId, TSourceId, TPublishedBy}"/>。</param>
+        /// <param name="other">给定的 <see cref="ContentUnit{TGenId, TCategoryId, TPaneId, TSourceId, TPublishedBy}"/>。</param>
         /// <returns>返回布尔值。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        public virtual bool Equals(ContentUnit<TGenId, TCategoryId, TSourceId, TPublishedBy> other)
+        public virtual bool Equals(ContentUnit<TGenId, TCategoryId, TPaneId, TSourceId, TPublishedBy> other)
             => other.IsNotNull() && CategoryId.Equals(other.CategoryId) && Title == other.Title;
 
         /// <summary>
@@ -89,7 +91,7 @@ namespace Librame.Extensions.Content.Stores
         /// <param name="obj">给定要比较的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is ContentUnit<TGenId, TCategoryId, TSourceId, TPublishedBy> other) && Equals(other);
+            => (obj is ContentUnit<TGenId, TCategoryId, TPaneId, TSourceId, TPublishedBy> other) && Equals(other);
 
 
         /// <summary>

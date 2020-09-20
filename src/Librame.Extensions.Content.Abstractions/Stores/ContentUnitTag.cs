@@ -19,7 +19,7 @@ namespace Librame.Extensions.Content.Stores
     using Data.Stores;
 
     /// <summary>
-    /// 内容单元标签。
+    /// 单元标签。
     /// </summary>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TUnitId">指定的单元标识类型。</typeparam>

@@ -22,15 +22,15 @@ namespace Librame.Extensions.Content.Stores
     using Data.Stores;
 
     /// <summary>
-    /// 内容单元访问计数。
+    /// 单元访问计数。
     /// </summary>
-    /// <typeparam name="TUnitId">指定的内容单元标识类型。</typeparam>
-    [Description("内容单元访问计数")]
+    /// <typeparam name="TUnitId">指定的单元标识类型。</typeparam>
+    [Description("单元访问计数")]
     public class ContentUnitVisitCount<TUnitId> : AbstractVisitUserCount<long>
         where TUnitId : IEquatable<TUnitId>
     {
         /// <summary>
-        /// 内容单元标识。
+        /// 单元标识。
         /// </summary>
         [Display(Name = nameof(UnitId), ResourceType = typeof(AbstractContentResource))]
         public virtual TUnitId UnitId { get; set; }

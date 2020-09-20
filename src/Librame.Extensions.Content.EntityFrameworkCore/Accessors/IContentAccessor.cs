@@ -38,12 +38,12 @@ namespace Librame.Extensions.Content.Accessors
             ContentSource<TIncremId, TPublishedBy>,
             ContentClaim<TIncremId, TIncremId, TPublishedBy>,
             ContentTag<TIncremId, TPublishedBy>,
-            ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>,
+            ContentUnit<TGenId, TIncremId, TIncremId, TIncremId, TPublishedBy>,
             ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>,
             ContentUnitTag<TIncremId, TGenId, TIncremId>,
             ContentUnitVisitCount<TGenId>,
             ContentPane<TIncremId, TPublishedBy>,
-            ContentPaneUnit<TIncremId, TIncremId, TGenId, TPublishedBy>>
+            ContentPaneClaim<TIncremId, TIncremId, TIncremId, TPublishedBy>>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TPublishedBy : IEquatable<TPublishedBy>
@@ -54,17 +54,17 @@ namespace Librame.Extensions.Content.Accessors
     /// <summary>
     /// 内容访问器接口。
     /// </summary>
-    /// <typeparam name="TCategory">指定的内容分类类型。</typeparam>
-    /// <typeparam name="TSource">指定的内容来源类型。</typeparam>
-    /// <typeparam name="TClaim">指定的内容声明类型。</typeparam>
-    /// <typeparam name="TTag">指定的内容标签类型。</typeparam>
-    /// <typeparam name="TUnit">指定的内容单元类型。</typeparam>
-    /// <typeparam name="TUnitClaim">指定的内容单元声明类型。</typeparam>
-    /// <typeparam name="TUnitTag">指定的内容单元标签类型。</typeparam>
-    /// <typeparam name="TUnitVisitCount">指定的内容单元访问计数类型。</typeparam>
-    /// <typeparam name="TPane">指定的内容窗格类型。</typeparam>
-    /// <typeparam name="TPaneUnit">指定的内容单元类型。</typeparam>
-    public interface IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit>
+    /// <typeparam name="TCategory">指定的类别类型。</typeparam>
+    /// <typeparam name="TSource">指定的来源类型。</typeparam>
+    /// <typeparam name="TClaim">指定的声明类型。</typeparam>
+    /// <typeparam name="TTag">指定的标签类型。</typeparam>
+    /// <typeparam name="TUnit">指定的单元类型。</typeparam>
+    /// <typeparam name="TUnitClaim">指定的单元声明类型。</typeparam>
+    /// <typeparam name="TUnitTag">指定的单元标签类型。</typeparam>
+    /// <typeparam name="TUnitVisitCount">指定的单元访问计数类型。</typeparam>
+    /// <typeparam name="TPane">指定的窗格类型。</typeparam>
+    /// <typeparam name="TPaneClaim">指定的单元类型。</typeparam>
+    public interface IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim>
         : IAccessor // 接口不强制继承 IAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
         where TCategory : class
         where TSource : class
@@ -75,10 +75,10 @@ namespace Librame.Extensions.Content.Accessors
         where TUnitTag : class
         where TUnitVisitCount : class
         where TPane : class
-        where TPaneUnit : class
+        where TPaneClaim : class
     {
         /// <summary>
-        /// 分类数据集。
+        /// 类别数据集。
         /// </summary>
         DbSet<TCategory> Categories { get; set; }
 
@@ -123,13 +123,13 @@ namespace Librame.Extensions.Content.Accessors
         DbSet<TPane> Panes { get; set; }
 
         /// <summary>
-        /// 窗格单元数据集。
+        /// 窗格声明数据集。
         /// </summary>
-        DbSet<TPaneUnit> PaneUnits { get; set; }
+        DbSet<TPaneClaim> PaneClaims { get; set; }
 
 
         /// <summary>
-        /// 分类数据集管理器。
+        /// 类别数据集管理器。
         /// </summary>
         DbSetManager<TCategory> CategoriesManager { get; }
 
@@ -174,8 +174,8 @@ namespace Librame.Extensions.Content.Accessors
         DbSetManager<TPane> PanesManager { get; }
 
         /// <summary>
-        /// 窗格单元数据集管理器。
+        /// 窗格声明数据集管理器。
         /// </summary>
-        DbSetManager<TPaneUnit> PaneUnitsManager { get; }
+        DbSetManager<TPaneClaim> PaneClaimsManager { get; }
     }
 }

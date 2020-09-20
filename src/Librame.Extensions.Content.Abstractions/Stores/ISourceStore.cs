@@ -19,7 +19,7 @@ namespace Librame.Extensions.Content.Stores
     /// <summary>
     /// 来源存储接口。
     /// </summary>
-    /// <typeparam name="TSource">指定的内容来源类型。</typeparam>
+    /// <typeparam name="TSource">指定的来源类型。</typeparam>
     public interface ISourceStore<TSource> : IStore
         where TSource : class
     {

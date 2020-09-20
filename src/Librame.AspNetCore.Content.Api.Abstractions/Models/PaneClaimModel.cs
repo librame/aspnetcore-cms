@@ -13,24 +13,24 @@
 namespace Librame.AspNetCore.Content.Api.Models
 {
     /// <summary>
-    /// 声明模型。
+    /// 窗格声明模型。
     /// </summary>
-    public class ClaimModel : AbstractCreationModel
+    public class PaneClaimModel : AbstractIdentifierModel
     {
         /// <summary>
-        /// 名称。
+        /// 声明值。
         /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// 描述。
-        /// </summary>
-        public string Description { get; set; }
+        public string ClaimValue { get; set; }
 
 
         /// <summary>
-        /// 类别模型。
+        /// 父级模型。
         /// </summary>
-        public CategoryModel Category { get; set; }
+        public PaneModel Pane { get; set; }
+
+        /// <summary>
+        /// 声明模型。
+        /// </summary>
+        public ClaimModel Claim { get; set; }
     }
 }

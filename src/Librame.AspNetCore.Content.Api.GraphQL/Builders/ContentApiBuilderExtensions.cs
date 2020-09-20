@@ -41,14 +41,35 @@ namespace Microsoft.Extensions.DependencyInjection
 
             var parameterMapper = contentBuilder.AccessorTypeParameterMapper;
 
-            var apiMutationType = typeof(ContentGraphApiMutation<,,>).MakeGenericType(
-                contentBuilder.Source.UserType,
-                parameterMapper.GenId.ArgumentType,
-                parameterMapper.CreatedBy.ArgumentType);
+            var apiMutationType = typeof(ContentGraphApiMutation<,,,,,,,,,,,,>).MakeGenericType(
+                parameterMapper.Category.ArgumentType,
+                parameterMapper.Source.ArgumentType,
+                parameterMapper.Claim.ArgumentType,
+                parameterMapper.Tag.ArgumentType,
+                parameterMapper.Unit.ArgumentType,
+                parameterMapper.UnitClaim.ArgumentType,
+                parameterMapper.UnitTag.ArgumentType,
+                parameterMapper.UnitVisitCount.ArgumentType,
+                parameterMapper.Pane.ArgumentType,
+                parameterMapper.PaneClaim.ArgumentType,
+                parameterMapper.BaseMapper.GenId.ArgumentType,
+                parameterMapper.BaseMapper.IncremId.ArgumentType,
+                parameterMapper.BaseMapper.CreatedBy.ArgumentType);
 
-            var apiQueryType = typeof(ContentGraphApiQuery<,>).MakeGenericType(
-                contentBuilder.Source.RoleType,
-                contentBuilder.Source.UserType);
+            var apiQueryType = typeof(ContentGraphApiQuery<,,,,,,,,,,,,>).MakeGenericType(
+                parameterMapper.Category.ArgumentType,
+                parameterMapper.Source.ArgumentType,
+                parameterMapper.Claim.ArgumentType,
+                parameterMapper.Tag.ArgumentType,
+                parameterMapper.Unit.ArgumentType,
+                parameterMapper.UnitClaim.ArgumentType,
+                parameterMapper.UnitTag.ArgumentType,
+                parameterMapper.UnitVisitCount.ArgumentType,
+                parameterMapper.Pane.ArgumentType,
+                parameterMapper.PaneClaim.ArgumentType,
+                parameterMapper.BaseMapper.GenId.ArgumentType,
+                parameterMapper.BaseMapper.IncremId.ArgumentType,
+                parameterMapper.BaseMapper.CreatedBy.ArgumentType);
 
             contentBuilder.Services.TryReplaceAll(typeof(IGraphApiMutation), apiMutationType);
             contentBuilder.Services.TryReplaceAll(typeof(IGraphApiQuery), apiQueryType);

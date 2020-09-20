@@ -30,53 +30,53 @@ namespace Librame.Extensions.Content.Options
 
 
         /// <summary>
-        /// 内容分类表描述符配置动作。
+        /// 类别表描述符配置动作。
         /// </summary>
         public Action<TableDescriptor> Category { get; set; }
 
         /// <summary>
-        /// 内容来源表描述符配置动作。
+        /// 来源表描述符配置动作。
         /// </summary>
         public Action<TableDescriptor> Source { get; set; }
 
         /// <summary>
-        /// 内容声明表描述符配置动作。
+        /// 声明表描述符配置动作。
         /// </summary>
         public Action<TableDescriptor> Claim { get; set; }
 
         /// <summary>
-        /// 内容标签表描述符配置动作。
+        /// 标签表描述符配置动作。
         /// </summary>
         public Action<TableDescriptor> Tag { get; set; }
 
         /// <summary>
-        /// 内容单元表描述符配置动作。
+        /// 单元表描述符配置动作。
         /// </summary>
         public Action<TableDescriptor> Unit { get; set; }
 
         /// <summary>
-        /// 内容单元声明表描述符配置动作。
+        /// 单元声明表描述符配置动作。
         /// </summary>
         public Action<TableDescriptor> UnitClaim { get; set; }
 
         /// <summary>
-        /// 内容单元标签表描述符配置动作。
+        /// 单元标签表描述符配置动作。
         /// </summary>
         public Action<TableDescriptor> UnitTag { get; set; }
 
         /// <summary>
-        /// 内容单元访问计数表描述符配置动作。
+        /// 单元访问计数表描述符配置动作。
         /// </summary>
         public Action<TableDescriptor> UnitVisitCount { get; set; }
 
         /// <summary>
-        /// 内容窗格表描述符配置动作。
+        /// 窗格表描述符配置动作。
         /// </summary>
         public Action<TableDescriptor> Pane { get; set; }
 
         /// <summary>
-        /// 内容窗格单元表描述符配置动作。
+        /// 窗格声明表描述符配置动作。
         /// </summary>
-        public Action<TableDescriptor> PaneUnit { get; set; }
+        public Action<TableDescriptor> PaneClaim { get; set; }
     }
 }

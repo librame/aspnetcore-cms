@@ -16,20 +16,21 @@ namespace Librame.AspNetCore.Content.Api.Types
     using AspNetCore.Content.Api.Models;
 
     /// <summary>
-    /// 登入输入类型。
+    /// 窗格声明类型。
     /// </summary>
-    public class CategoryInputType : ApiInputTypeBase<CategoryModel>
+    public class PaneClaimType : ApiTypeBase<PaneClaimModel>
     {
         /// <summary>
-        /// 构造一个 <see cref="CategoryInputType"/>。
+        /// 构造一个窗格声明类型。
         /// </summary>
-        public CategoryInputType()
+        public PaneClaimType()
             : base()
         {
-            Field(f => f.Name);
-            Field(f => f.Description);
+            Field(f => f.Id);
+            Field(f => f.ClaimValue);
 
-            Field(f => f.Parent, nullable: true);
+            Field(f => f.Pane, type: typeof(PaneType), nullable: true);
+            Field(f => f.Claim, type: typeof(UnitType), nullable: true);
         }
 
     }

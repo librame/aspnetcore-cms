@@ -13,6 +13,9 @@
 using GraphQL.Types;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 
 namespace Librame.AspNetCore.Content.Api
@@ -21,41 +24,40 @@ namespace Librame.AspNetCore.Content.Api
     using AspNetCore.Content.Api.Models;
     using AspNetCore.Content.Api.Types;
     using Extensions;
-    using Extensions.Data.Collections;
     using Extensions.Content.Accessors;
     using Extensions.Content.Builders;
     using Extensions.Content.Stores;
     using Extensions.Data.Accessors;
-    using System.Collections.Generic;
+    using Extensions.Data.Collections;
 
     /// <summary>
     /// 内容图形 API 查询。
     /// </summary>
-    /// <typeparam name="TCategory">指定的内容分类类型。</typeparam>
-    /// <typeparam name="TSource">指定的内容来源类型。</typeparam>
-    /// <typeparam name="TClaim">指定的内容声明类型。</typeparam>
-    /// <typeparam name="TTag">指定的内容标签类型。</typeparam>
-    /// <typeparam name="TUnit">指定的内容单元类型。</typeparam>
-    /// <typeparam name="TUnitClaim">指定的内容单元声明类型。</typeparam>
-    /// <typeparam name="TUnitTag">指定的内容单元标签类型。</typeparam>
-    /// <typeparam name="TUnitVisitCount">指定的内容单元访问计数类型。</typeparam>
-    /// <typeparam name="TPane">指定的内容窗格类型。</typeparam>
-    /// <typeparam name="TPaneUnit">指定的内容单元类型。</typeparam>
+    /// <typeparam name="TCategory">指定的类别类型。</typeparam>
+    /// <typeparam name="TSource">指定的来源类型。</typeparam>
+    /// <typeparam name="TClaim">指定的声明类型。</typeparam>
+    /// <typeparam name="TTag">指定的标签类型。</typeparam>
+    /// <typeparam name="TUnit">指定的单元类型。</typeparam>
+    /// <typeparam name="TUnitClaim">指定的单元声明类型。</typeparam>
+    /// <typeparam name="TUnitTag">指定的单元标签类型。</typeparam>
+    /// <typeparam name="TUnitVisitCount">指定的单元访问计数类型。</typeparam>
+    /// <typeparam name="TPane">指定的窗格类型。</typeparam>
+    /// <typeparam name="TPaneClaim">指定的窗格声明类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
-    public class ContentGraphApiQuery<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TGenId, TIncremId, TPublishedBy>
+    public class ContentGraphApiQuery<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim, TGenId, TIncremId, TPublishedBy>
         : GraphApiQueryBase
         where TCategory : ContentCategory<TIncremId, TPublishedBy>
         where TSource : ContentSource<TIncremId, TPublishedBy>
         where TClaim : ContentClaim<TIncremId, TIncremId, TPublishedBy>
         where TTag : ContentTag<TIncremId, TPublishedBy>
-        where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>
+        where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TIncremId, TPublishedBy>
         where TUnitClaim : ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>
         where TUnitTag : ContentUnitTag<TIncremId, TGenId, TIncremId>
         where TUnitVisitCount : ContentUnitVisitCount<TGenId>
         where TPane : ContentPane<TIncremId, TPublishedBy>
-        where TPaneUnit : ContentPaneUnit<TIncremId, TIncremId, TGenId, TPublishedBy>
+        where TPaneClaim : ContentPaneClaim<TIncremId, TIncremId, TIncremId, TPublishedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TPublishedBy : IEquatable<TPublishedBy>
@@ -66,13 +68,12 @@ namespace Librame.AspNetCore.Content.Api
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         /// <param name="dependency">给定的 <see cref="ContentBuilderDependency"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public ContentGraphApiQuery(IAccessor accessor,
-            ContentBuilderDependency dependency,
+        public ContentGraphApiQuery(IAccessor accessor, ContentBuilderDependency dependency,
             ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
             ContentAccessor = accessor.CastTo<IAccessor,
-                IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit>>(nameof(accessor));
+                IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim>>(nameof(accessor));
 
             Dependency = dependency.NotNull(nameof(dependency));
 
@@ -82,23 +83,24 @@ namespace Librame.AspNetCore.Content.Api
             AddTagTypeFields();
             AddUnitTypeFields();
             AddPaneTypeFields();
+            AddPaneUnitTypeFields();
         }
 
+
+        /// <summary>
+        /// 身份访问器。
+        /// </summary>
+        protected IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim> ContentAccessor { get; }
 
         /// <summary>
         /// 构建器依赖。
         /// </summary>
         protected ContentBuilderDependency Dependency { get; }
 
-        /// <summary>
-        /// 身份访问器。
-        /// </summary>
-        protected IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit> ContentAccessor { get; }
-
 
         private void AddCategoryTypeFields()
         {
-            // { pageCategories(index: 1, size: 10, search: "") { id name description createdTime createdBy } }
+            // { pageCategories(index: 1, size: 10, search: "") { id name description createdTime createdBy [parent{...} }] }
             Field<ListGraphType<CategoryType>>
             (
                 name: "pageCategories",
@@ -124,14 +126,26 @@ namespace Librame.AspNetCore.Content.Api
                         {
                             return ordered.OrderBy(k => k.CreatedTimeTicks);
                         },
-                        index, size).SelectPaging(s => ToCategoryModelWithParent(s));
+                        index, size).SelectPaging(category =>
+                        {
+                            return category.ToModel<TCategory, TIncremId, TPublishedBy>(parentId =>
+                            {
+                                return ContentAccessor.Categories.Find(parentId);
+                            });
+                        });
                     }
 
-                    return query.ToList().Select(s => ToCategoryModelWithParent(s));
+                    return query.ToList().Select(category =>
+                    {
+                        return category.ToModel<TCategory, TIncremId, TPublishedBy>(parentId =>
+                        {
+                            return ContentAccessor.Categories.Find(parentId);
+                        });
+                    });
                 }
             );
 
-            // { categories(parentId) { id name description createdTime createdBy } }
+            // { categories(parentId) { id name description createdTime createdBy [parent{...}] } }
             Field<ListGraphType<CategoryType>>
             (
                 name: "categories",
@@ -145,11 +159,17 @@ namespace Librame.AspNetCore.Content.Api
                     return ContentAccessor.Categories
                         .Where(p => p.ParentId.Equals(parentId))
                         .ToList()
-                        .Select(s => ToCategoryModelWithParent(s));
+                        .Select(category =>
+                        {
+                            return category.ToModel<TCategory, TIncremId, TPublishedBy>(parentId =>
+                            {
+                                return ContentAccessor.Categories.Find(parentId);
+                            });
+                        });
                 }
             );
 
-            // { categoryId(id: "") { id name description createdTime createdBy parent{...} } }
+            // { categoryId(id: "") { id name description createdTime createdBy [parent{...}] } }
             Field<CategoryType>
             (
                 name: "categoryId",
@@ -161,11 +181,14 @@ namespace Librame.AspNetCore.Content.Api
                     var id = context.GetArgument<TIncremId>("id");
                     var category = ContentAccessor.Categories.Find(id);
 
-                    return ToCategoryModelWithParent(category);
+                    return category.ToModel<TCategory, TIncremId, TPublishedBy>(parentId =>
+                    {
+                        return ContentAccessor.Categories.Find(parentId);
+                    });
                 }
             );
 
-            // { categoryName(name: "") { id name description createdTime createdBy parent{...} } }
+            // { categoryName(name: "") { id name description createdTime createdBy [parent{...}] } }
             Field<CategoryType>
             (
                 name: "categoryName",
@@ -177,26 +200,31 @@ namespace Librame.AspNetCore.Content.Api
                     var name = context.GetArgument<string>("name");
                     var category = ContentAccessor.Categories.FirstOrDefault(p => p.Name == name);
 
-                    return ToCategoryModelWithParent(category);
+                    return category.ToModel<TCategory, TIncremId, TPublishedBy>(parentId =>
+                    {
+                        return ContentAccessor.Categories.Find(parentId);
+                    });
                 }
             );
         }
 
         private void AddSourceTypeFields()
         {
-            // { pageSources(index: 1, size: 10, search: "") { id name description website weblogo createdTime createdBy } }
+            // { pageSources(index: 1, size: 10, trace: false, search: "") { id name description website weblogo createdTime createdBy [parent{...}] } }
             Field<ListGraphType<SourceType>>
             (
                 name: "pageSources",
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "index" },
                     new QueryArgument<IntGraphType> { Name = "size" },
+                    new QueryArgument<BooleanGraphType> { Name = "trace" },
                     new QueryArgument<StringGraphType> { Name = "search" }
                 ),
                 resolve: context =>
                 {
                     var index = context.GetArgument<int>("index");
                     var size = context.GetArgument<int>("size");
+                    var trace = context.GetArgument<bool>("trace");
                     var search = context.GetArgument<string>("search");
 
                     var query = ContentAccessor.Sources.AsQueryable();
@@ -210,79 +238,89 @@ namespace Librame.AspNetCore.Content.Api
                         {
                             return ordered.OrderBy(k => k.CreatedTimeTicks);
                         },
-                        index, size).SelectPaging(s => ToSourceModelWithParent(s));
+                        index, size).SelectPaging(s => ToSourceModel(s, trace));
                     }
 
-                    return query.ToList().Select(s => ToSourceModelWithParent(s));
+                    return query.ToList().Select(s => ToSourceModel(s, trace));
                 }
             );
 
-            // { sources(parentId) { id name description website weblogo createdTime createdBy } }
+            // { sources(parentId, trace: false) { id name description website weblogo createdTime createdBy [parent{...}] } }
             Field<ListGraphType<SourceType>>
             (
                 name: "sources",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "parentId" }
+                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "parentId" },
+                    new QueryArgument<BooleanGraphType> { Name = "trace" }
                 ),
                 resolve: context =>
                 {
                     var parentId = context.GetArgument<TIncremId>("parentId");
+                    var trace = context.GetArgument<bool>("trace");
 
                     return ContentAccessor.Sources
                         .Where(p => p.ParentId.Equals(parentId))
                         .ToList()
-                        .Select(s => ToSourceModelWithParent(s));
+                        .Select(s => ToSourceModel(s, trace));
                 }
             );
 
-            // { sourceId(id: "") { id name description website weblogo createdTime createdBy parent{...} } }
+            // { sourceId(id: "", trace: false) { id name description website weblogo createdTime createdBy [parent{...}] } }
             Field<SourceType>
             (
                 name: "sourceId",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "id" }
+                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "id" },
+                    new QueryArgument<BooleanGraphType> { Name = "trace" }
                 ),
                 resolve: context =>
                 {
                     var id = context.GetArgument<TIncremId>("id");
+                    var trace = context.GetArgument<bool>("trace");
+
                     var source = ContentAccessor.Sources.Find(id);
 
-                    return ToSourceModelWithParent(source);
+                    return ToSourceModel(source, trace);
                 }
             );
 
-            // { sourceName(name: "") { id name description website weblogo createdTime createdBy parent{...} } }
+            // { sourceName(name: "", trace: false) { id name description website weblogo createdTime createdBy [parent{...}] } }
             Field<SourceType>
             (
                 name: "sourceName",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "name" }
+                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "name" },
+                    new QueryArgument<BooleanGraphType> { Name = "trace" }
                 ),
                 resolve: context =>
                 {
                     var name = context.GetArgument<string>("name");
+                    var trace = context.GetArgument<bool>("trace");
+
                     var source = ContentAccessor.Sources.FirstOrDefault(p => p.Name == name);
 
-                    return ToSourceModelWithParent(source);
+                    return ToSourceModel(source, trace);
                 }
             );
         }
 
         private void AddClaimTypeFields()
         {
-            // { pageClaims(index: 1, size: 10, search: "") { id name description createdTime createdBy category{...} } }
+            // { pageClaims(index: 1, size: 10, includeCategory: false, search: "") { id name description createdTime createdBy [category{...}] } }
             Field<ListGraphType<ClaimType>>
             (
                 name: "pageClaims",
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "index" },
                     new QueryArgument<IntGraphType> { Name = "size" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeCategory" },
                     new QueryArgument<StringGraphType> { Name = "search" }
                 ),
                 resolve: context =>
                 {
                     var index = context.GetArgument<int>("index");
                     var size = context.GetArgument<int>("size");
+                    var includeCategory = context.GetArgument<bool>("includeCategory");
                     var search = context.GetArgument<string>("search");
 
                     var query = ContentAccessor.Claims.AsQueryable();
@@ -298,14 +336,14 @@ namespace Librame.AspNetCore.Content.Api
                         },
                         index, size);
 
-                        return ToClaimModels(claims);
+                        return ToClaimModels(claims, includeCategory);
                     }
 
-                    return ToClaimModels(query.ToList());
+                    return ToClaimModels(query.ToList(), includeCategory);
                 }
             );
 
-            // { claims(categoryId) { id name description createdTime createdBy category{...} } }
+            // { claims(categoryId, includeCategory: false) { id name description createdTime createdBy [category{...}] } }
             Field<ListGraphType<ClaimType>>
             (
                 name: "claims",
@@ -315,16 +353,17 @@ namespace Librame.AspNetCore.Content.Api
                 resolve: context =>
                 {
                     var categoryId = context.GetArgument<TIncremId>("categoryId");
+                    var includeCategory = context.GetArgument<bool>("includeCategory");
 
                     var claims = ContentAccessor.Claims
                         .Where(p => p.CategoryId.Equals(categoryId))
                         .ToList();
 
-                    return ToClaimModels(claims);
+                    return ToClaimModels(claims, includeCategory);
                 }
             );
 
-            // { claimId(id: "") { id name description createdTime createdBy category{...} } }
+            // { claimId(id: "", includeCategory: false) { id name description createdTime createdBy [category{...}] } }
             Field<ClaimType>
             (
                 name: "claimId",
@@ -334,13 +373,15 @@ namespace Librame.AspNetCore.Content.Api
                 resolve: context =>
                 {
                     var id = context.GetArgument<TIncremId>("id");
+                    var includeCategory = context.GetArgument<bool>("includeCategory");
+
                     var claim = ContentAccessor.Claims.Find(id);
 
-                    return ToClaimModel(claim);
+                    return ToClaimModel(claim, includeCategory);
                 }
             );
 
-            // { claimName(name: "") { id name description createdTime createdBy category{...} } }
+            // { claimName(name: "", includeCategory: false) { id name description createdTime createdBy [category{...}] } }
             Field<ClaimType>
             (
                 name: "claimName",
@@ -350,9 +391,11 @@ namespace Librame.AspNetCore.Content.Api
                 resolve: context =>
                 {
                     var name = context.GetArgument<string>("name");
+                    var includeCategory = context.GetArgument<bool>("includeCategory");
+
                     var claim = ContentAccessor.Claims.FirstOrDefault(p => p.Name == name);
 
-                    return ToClaimModel(claim);
+                    return ToClaimModel(claim, includeCategory);
                 }
             );
         }
@@ -423,19 +466,21 @@ namespace Librame.AspNetCore.Content.Api
 
         private void AddUnitTypeFields()
         {
-            // { pageUnits(index: 1, size: 10, search: "") { id categoryId sourceId title subtitle tags reference publishedAs publishedTime publishedBy createdTime createdBy } }
+            // { pageUnits(index: 1, size: 10, includeVisitCount: false, search: "") { id title subtitle tags reference publishedAs publishedTime publishedBy createdTime createdBy [unitVisitCount{...}] } }
             Field<ListGraphType<UnitType>>
             (
                 name: "pageUnits",
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "index" },
                     new QueryArgument<IntGraphType> { Name = "size" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeVisitCount" },
                     new QueryArgument<StringGraphType> { Name = "search" }
                 ),
                 resolve: context =>
                 {
                     var index = context.GetArgument<int>("index");
                     var size = context.GetArgument<int>("size");
+                    var includeVisitCount = context.GetArgument<bool>("includeVisitCount");
                     var search = context.GetArgument<string>("search");
 
                     var query = ContentAccessor.Units.AsQueryable();
@@ -449,57 +494,87 @@ namespace Librame.AspNetCore.Content.Api
                         {
                             return ordered.OrderBy(k => k.CreatedTimeTicks);
                         },
-                        index, size);
+                        index, size).SelectPaging(s => ToUnitModel(s, includeVisitCount));
                     }
 
-                    return query.ToList();
+                    return query.ToList().Select(s => ToUnitModel(s, includeVisitCount));
                 }
             );
 
-            // { unitId(id: "") { id categoryId sourceId title subtitle tags reference publishedAs publishedTime publishedBy createdTime createdBy } }
+            // { unitId(id: "", includeCategory: false, includeSource: false, includeVisitCount: false, includeClaims: false, includeTags: false) { id title subtitle tags reference publishedAs publishedTime publishedBy createdTime createdBy [category{...}] [source{...}] [unitVisitCount{...}] [unitClaims[{...}]] [unitTags[{...}]] } }
             Field<UnitType>
             (
                 name: "unitId",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "id" }
+                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "id" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeCategory" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeSource" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeVisitCount" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeClaims" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeTags" }
                 ),
                 resolve: context =>
                 {
                     var id = context.GetArgument<TIncremId>("id");
-                    return ContentAccessor.Units.Find(id);
+                    var includeCategory = context.GetArgument<bool>("includeCategory");
+                    var includeSource = context.GetArgument<bool>("includeSource");
+                    var includeVisitCount = context.GetArgument<bool>("includeVisitCount");
+                    var includeClaims = context.GetArgument<bool>("includeClaims");
+                    var includeTags = context.GetArgument<bool>("includeTags");
+
+                    var unit = ContentAccessor.Units.Find(id);
+
+                    return ToUnitModel(unit, includeCategory, includeSource, includeVisitCount, includeClaims, includeTags);
                 }
             );
 
-            // { unitName(title: "") { id categoryId sourceId title subtitle tags reference publishedAs publishedTime publishedBy createdTime createdBy } }
+            // { unitTitle(title: "", includeCategory: false, includeSource: false, includeVisitCount: false, includeClaims: false, includeTags: false) { id title subtitle tags reference publishedAs publishedTime publishedBy createdTime createdBy [category{...}] [source{...}] [unitVisitCount{...}] [unitClaims[{...}]] [unitTags[{...}]] } }
             Field<UnitType>
             (
                 name: "unitTitle",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "title" }
+                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "title" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeCategory" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeSource" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeVisitCount" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeClaims" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeTags" }
                 ),
                 resolve: context =>
                 {
                     var title = context.GetArgument<string>("title");
-                    return ContentAccessor.Units.FirstOrDefault(p => p.Title == title);
+                    var includeCategory = context.GetArgument<bool>("includeCategory");
+                    var includeSource = context.GetArgument<bool>("includeSource");
+                    var includeVisitCount = context.GetArgument<bool>("includeVisitCount");
+                    var includeClaims = context.GetArgument<bool>("includeClaims");
+                    var includeTags = context.GetArgument<bool>("includeTags");
+
+                    var unit = ContentAccessor.Units.FirstOrDefault(p => p.Title == title);
+
+                    return ToUnitModel(unit, includeCategory, includeSource, includeVisitCount, includeClaims, includeTags);
                 }
             );
         }
 
         private void AddPaneTypeFields()
         {
-            // { pagePanes(index: 1, size: 10, search: "") { id parentId name description icon more createdTime createdBy } }
-            Field<ListGraphType<PaneType<TPane, TIncremId, TPublishedBy>>>
+            // { pagePanes(index: 1, size: 10, trace: false, includeClaims: false, search: "") { id name description icon more createdTime createdBy [parent{...}] [paneClaims[{...}]] } }
+            Field<ListGraphType<PaneType>>
             (
                 name: "pagePanes",
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "index" },
                     new QueryArgument<IntGraphType> { Name = "size" },
+                    new QueryArgument<BooleanGraphType> { Name = "trace" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeClaims" },
                     new QueryArgument<StringGraphType> { Name = "search" }
                 ),
                 resolve: context =>
                 {
                     var index = context.GetArgument<int>("index");
                     var size = context.GetArgument<int>("size");
+                    var trace = context.GetArgument<bool>("trace");
+                    var includeClaims = context.GetArgument<bool>("includeClaims");
                     var search = context.GetArgument<string>("search");
 
                     var query = ContentAccessor.Panes.AsQueryable();
@@ -513,97 +588,124 @@ namespace Librame.AspNetCore.Content.Api
                         {
                             return ordered.OrderBy(k => k.CreatedTimeTicks);
                         },
-                        index, size);
+                        index, size).SelectPaging(s => ToPaneModel(s, trace, includeClaims));
                     }
 
-                    return query.ToList();
+                    return query.ToList().Select(s => ToPaneModel(s, trace, includeClaims));
                 }
             );
 
-            // { panes(parentId) { id parentId name description icon more createdTime createdBy } }
-            Field<ListGraphType<PaneType<TPane, TIncremId, TPublishedBy>>>
+            // { panes(parentId, trace: false, includeClaims: false) { id name description icon more createdTime createdBy [parent{...}] [paneClaims[{...}]] } }
+            Field<ListGraphType<PaneType>>
             (
                 name: "panes",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "parentId" }
+                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "parentId" },
+                    new QueryArgument<BooleanGraphType> { Name = "trace" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeClaims" }
                 ),
                 resolve: context =>
                 {
                     var parentId = context.GetArgument<TIncremId>("parentId");
+                    var trace = context.GetArgument<bool>("trace");
+                    var includeClaims = context.GetArgument<bool>("includeClaims");
 
                     return ContentAccessor.Panes
                         .Where(p => p.ParentId.Equals(parentId))
-                        .ToList();
+                        .ToList().Select(s => ToPaneModel(s, trace, includeClaims));
                 }
             );
 
-            // { paneId(id: "") { id parentId name description icon more createdTime createdBy } }
-            Field<PaneType<TPane, TIncremId, TPublishedBy>>
+            // { paneId(id: "", trace: false, includeClaims: false) { id name description icon more createdTime createdBy [parent{...}] [paneClaims[{...}]] } }
+            Field<PaneType>
             (
                 name: "paneId",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "id" }
+                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "id" },
+                    new QueryArgument<BooleanGraphType> { Name = "trace" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeClaims" }
                 ),
                 resolve: context =>
                 {
                     var id = context.GetArgument<TIncremId>("id");
-                    return ContentAccessor.Panes.FirstOrDefault(p => p.Id.Equals(id));
+                    var trace = context.GetArgument<bool>("trace");
+                    var includeClaims = context.GetArgument<bool>("includeClaims");
+
+                    var pane = ContentAccessor.Panes.FirstOrDefault(p => p.Id.Equals(id));
+
+                    return ToPaneModel(pane, trace, includeClaims);
                 }
             );
 
-            // { paneName(name: "") { id parentId name description icon more createdTime createdBy } }
-            Field<PaneType<TPane, TIncremId, TPublishedBy>>
+            // { paneName(name: "", trace: false, includeClaims: false) { id name description icon more createdTime createdBy [parent{...}] [paneClaims[{...}]] } }
+            Field<PaneType>
             (
                 name: "paneName",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "name" }
+                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "name" },
+                    new QueryArgument<BooleanGraphType> { Name = "trace" },
+                    new QueryArgument<BooleanGraphType> { Name = "includeClaims" }
                 ),
                 resolve: context =>
                 {
                     var name = context.GetArgument<string>("name");
-                    return ContentAccessor.Panes.FirstOrDefault(p => p.Name == name);
+                    var trace = context.GetArgument<bool>("trace");
+                    var includeClaims = context.GetArgument<bool>("includeClaims");
+
+                    var pane = ContentAccessor.Panes.FirstOrDefault(p => p.Name == name);
+
+                    return ToPaneModel(pane, trace, includeClaims);
+                }
+            );
+        }
+
+        private void AddPaneUnitTypeFields()
+        {
+            // { index(names: null/"快讯,焦点...") { pane{...} units[{...}] } }
+            Field<ListGraphType<PaneUnitType>>
+            (
+                name: "index",
+                arguments: new QueryArguments(
+                    new QueryArgument<StringGraphType> { Name = "names" }
+                ),
+                resolve: context =>
+                {
+                    var trace = context.GetArgument<bool>("trace");
+                    var includeClaims = context.GetArgument<bool>("includeClaims");
+
+                    var panes = new List<TPane>();
+
+                    var names = context.GetArgument<string>("names");
+                    if (names.IsNotEmpty())
+                    {
+                        if (names.Contains(',', StringComparison.InvariantCulture))
+                        {
+                            var items = names.Split(',')
+                                .Select(s => ContentAccessor.Panes.FirstOrDefault(p => p.Name == s))
+                                .ToList();
+
+                            panes.AddRange(items);
+                        }
+                        else
+                        {
+                            var item = ContentAccessor.Panes.FirstOrDefault(p => p.Name == names);
+                            panes.Add(item);
+                        }
+                    }
+
+                    return panes.Select(s => ToPaneUnitModel(s));
                 }
             );
         }
 
 
         /// <summary>
-        /// 转为带有父级分类的模型。
-        /// </summary>
-        /// <param name="category">给定的 <typeparamref name="TCategory"/>。</param>
-        /// <returns>返回 <see cref="CategoryModel"/>。</returns>
-        protected virtual CategoryModel ToCategoryModelWithParent(TCategory category)
-        {
-            if (category.IsNull())
-                return null;
-
-            return LoadParent(category.ToModel(), category.ParentId);
-
-            // LoadParent
-            CategoryModel LoadParent(CategoryModel model, TIncremId parentId)
-            {
-                if (!parentId.Equals(default))
-                {
-                    var parent = ContentAccessor.Categories.Find(parentId);
-                    if (parent.IsNotNull())
-                    {
-                        model.Parent = parent.ToModel();
-
-                        // 循环加载
-                        LoadParent(model.Parent, parent.ParentId);
-                    }
-                }
-
-                return model;
-            }
-        }
-
-        /// <summary>
-        /// 转为带有父级来源的模型。
+        /// 转为来源模型（支持对父级进行追溯）。
         /// </summary>
         /// <param name="source">给定的 <typeparamref name="TSource"/>。</param>
+        /// <param name="trace">是否对父级进行追溯。</param>
         /// <returns>返回 <see cref="SourceModel"/>。</returns>
-        protected virtual SourceModel ToSourceModelWithParent(TSource source)
+        protected virtual SourceModel ToSourceModel(TSource source, bool trace)
         {
             if (source.IsNull())
                 return null;
@@ -620,8 +722,8 @@ namespace Librame.AspNetCore.Content.Api
                     {
                         model.Parent = parent.ToModel();
 
-                        // 循环加载
-                        LoadParent(model.Parent, parent.ParentId);
+                        if (trace)
+                            LoadParent(model.Parent, parent.ParentId);
                     }
                 }
 
@@ -629,20 +731,20 @@ namespace Librame.AspNetCore.Content.Api
             }
         }
 
+
         /// <summary>
-        /// 尝试加载关联声明集合（支持包含分类集合）。
+        /// 转为声明模型集合（支持包含类别）。
         /// </summary>
         /// <param name="claims">给定的 <see cref="IPageable{TClaim}"/>。</param>
-        /// <param name="includeCategories">包含分类模型集合（可选；默认不包含）。</param>
+        /// <param name="includeCategory">包含类别模型。</param>
         /// <returns>返回 <see cref="IPageable{ClaimModel}"/>。</returns>
-        protected virtual IPageable<ClaimModel> ToClaimModels(IPageable<TClaim> claims,
-            bool includeCategories = false)
+        protected virtual IPageable<ClaimModel> ToClaimModels(IPageable<TClaim> claims, bool includeCategory)
         {
             if (claims.IsNull())
                 return null;
 
             Dictionary<TIncremId, TCategory> categories = null;
-            if (includeCategories)
+            if (includeCategory)
             {
                 categories = claims.Select(s => s.CategoryId).Distinct()
                     .Select(s => ContentAccessor.Categories.Find(s))
@@ -659,19 +761,18 @@ namespace Librame.AspNetCore.Content.Api
         }
 
         /// <summary>
-        /// 转为声明模型集合（支持包含分类集合）。
+        /// 转为声明模型集合（支持包含类别）。
         /// </summary>
         /// <param name="claims">给定的 <see cref="IEnumerable{TClaim}"/>。</param>
-        /// <param name="includeCategories">包含分类模型集合（可选；默认不包含）。</param>
+        /// <param name="includeCategory">包含类别模型。</param>
         /// <returns>返回 <see cref="IEnumerable{ClaimModel}"/>。</returns>
-        protected virtual IEnumerable<ClaimModel> ToClaimModels(IEnumerable<TClaim> claims,
-            bool includeCategories = false)
+        protected virtual IEnumerable<ClaimModel> ToClaimModels(IEnumerable<TClaim> claims, bool includeCategory)
         {
             if (claims.IsNull())
                 return null;
 
             Dictionary<TIncremId, TCategory> categories = null;
-            if (includeCategories)
+            if (includeCategory)
             {
                 categories = claims.Select(s => s.CategoryId).Distinct()
                     .Select(s => ContentAccessor.Categories.Find(s))
@@ -681,72 +782,63 @@ namespace Librame.AspNetCore.Content.Api
             return claims.Select(s =>
             {
                 var model = s.ToModel();
-                model.Category = categories?[s.CategoryId].ToModel();
 
                 return model;
             });
         }
 
         /// <summary>
-        /// 转为声明模型（支持包含分类）。
+        /// 转为声明模型（支持包含类别）。
         /// </summary>
         /// <param name="claim">给定的 <typeparamref name="TClaim"/>。</param>
-        /// <param name="includeCategory">包含分类模型（可选；默认包含）。</param>
+        /// <param name="includeCategory">包含类别模型。</param>
         /// <returns>返回 <see cref="ClaimModel"/>。</returns>
-        protected virtual ClaimModel ToClaimModel(TClaim claim, bool includeCategory = true)
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        protected virtual ClaimModel ToClaimModel(TClaim claim, bool includeCategory)
         {
-            if (claim.IsNull())
-                return null;
-
             var model = claim.ToModel();
 
-            if (includeCategory)
+            if (model.IsNotNull() && includeCategory)
                 model.Category = ContentAccessor.Categories.Find(claim.CategoryId).ToModel();
 
             return model;
         }
 
+
         /// <summary>
-        /// 转为单元模型集合（支持包含单元集合）
+        /// 转为单元模型（支持包含访问计数）。
         /// </summary>
-        /// <param name="units">给定的 <see cref="IEnumerable{TUnit}"/>。</param>
-        /// <param name="includeVisitCount">包含访问计数模型集合（可选；默认不包含）。</param>
-        /// <returns>返回 <see cref="IEnumerable{UnitModel}"/>。</returns>
-        protected virtual IEnumerable<UnitModel> ToUnitModels(IEnumerable<TUnit> units,
-            bool includeVisitCount = false)
+        /// <param name="unit">给定的 <typeparamref name="TUnit"/>。</param>
+        /// <param name="includeVisitCount">包含访问计数模型。</param>
+        /// <returns>返回 <see cref="UnitModel"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        protected virtual UnitModel ToUnitModel(TUnit unit, bool includeVisitCount)
         {
-            if (units.IsNull())
-                return null;
+            var model = unit.ToModel();
 
-            return units.Select(s =>
-            {
-                var model = s.ToModel();
+            if (model.IsNotNull() && includeVisitCount)
+                model.UnitVisitCount = ContentAccessor.UnitVisitCounts.Find(unit.Id).ToModel();
 
-                if (includeVisitCount)
-                    model.UnitVisitCount = ContentAccessor.UnitVisitCounts.Find(s.Id).ToModel();
-
-                return model;
-            });
+            return model;
         }
 
         /// <summary>
-        /// 转为单元模型（支持包含分类）。
+        /// 转为单元模型（支持包含类别、来源、访问计数、声明、标签等模型）。
         /// </summary>
         /// <param name="unit">给定的 <typeparamref name="TUnit"/>。</param>
-        /// <param name="includeCategory">包含分类模型（可选；默认包含）。</param>
-        /// <param name="includeSource">包含来源模型（可选；默认包含）。</param>
-        /// <param name="includeVisitCount">包含访问计数模型集合（可选；默认包含）。</param>
-        /// <param name="includeClaims">包含声明模型集合（可选；默认包含）。</param>
-        /// <param name="includeTags">包含标签模型集合（可选；默认包含）。</param>
+        /// <param name="includeCategory">包含类别模型。</param>
+        /// <param name="includeSource">包含来源模型。</param>
+        /// <param name="includeVisitCount">包含访问计数模型集合。</param>
+        /// <param name="includeClaims">包含声明模型集合。</param>
+        /// <param name="includeTags">包含标签模型集合。</param>
         /// <returns>返回 <see cref="UnitModel"/>。</returns>
-        protected virtual UnitModel ToUnitModel(TUnit unit, bool includeCategory = true,
-            bool includeSource = true, bool includeVisitCount = true,
-            bool includeClaims = true, bool includeTags = true)
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        protected virtual UnitModel ToUnitModel(TUnit unit, bool includeCategory,
+            bool includeSource, bool includeVisitCount, bool includeClaims, bool includeTags)
         {
-            if (unit.IsNull())
-                return null;
-
             var model = unit.ToModel();
+            if (model.IsNull())
+                return null;
 
             if (includeCategory)
                 model.Category = ContentAccessor.Categories.Find(unit.CategoryId).ToModel();
@@ -757,39 +849,120 @@ namespace Librame.AspNetCore.Content.Api
             if (includeVisitCount)
                 model.UnitVisitCount = ContentAccessor.UnitVisitCounts.Find(unit.Id).ToModel();
 
-            Dictionary<TIncremId, ClaimModel> claims = null;
             if (includeClaims)
             {
                 var unitClaims = ContentAccessor.UnitClaims
                     .Where(p => p.UnitId.Equals(unit.Id))
                     .ToList();
 
-                claims = unitClaims.Select(s => s.ClaimId).Distinct()
-                    .Select(s => ContentAccessor.Claims.Find(s))
-                    .ToDictionary(ks => ks.Id, es => es.ToModel());
+                if (unitClaims.IsNotEmpty())
+                {
+                    var claims = unitClaims.Select(s => s.ClaimId).Distinct()
+                        .Select(s => ContentAccessor.Claims.Find(s))
+                        .ToDictionary(ks => ks.Id, es => es.ToModel());
 
-                model.UnitClaims = unitClaims
-                    .Select(s => s.ToModel(claims[s.ClaimId]))
-                    .ToList();
+                    model.UnitClaims = unitClaims
+                        .Select(s => s.ToModel(claim: claims[s.ClaimId]))
+                        .ToList();
+                }
             }
 
-            Dictionary<TIncremId, TagModel> tags = null;
             if (includeTags)
             {
                 var unitTags = ContentAccessor.UnitTags
                     .Where(p => p.UnitId.Equals(unit.Id))
                     .ToList();
 
-                tags = unitTags.Select(s => s.TagId).Distinct()
+                if (unitTags.IsNotEmpty())
+                {
+                    var tags = unitTags.Select(s => s.TagId).Distinct()
                     .Select(s => ContentAccessor.Tags.Find(s))
                     .ToDictionary(ks => ks.Id, es => es.ToModel());
 
-                model.UnitTags = unitTags
-                    .Select(s => s.ToModel(tags[s.TagId]))
-                    .ToList();
+                    model.UnitTags = unitTags
+                        .Select(s => s.ToModel(tags[s.TagId]))
+                        .ToList();
+                }
             }
 
             return model;
+        }
+
+
+        /// <summary>
+        /// 转为窗格模型（支持对父级进行追溯）。
+        /// </summary>
+        /// <param name="pane">给定的 <typeparamref name="TPane"/>。</param>
+        /// <param name="trace">是否对父级进行追溯。</param>
+        /// <param name="includeClaims">包含声明模型集合。</param>
+        /// <returns>返回 <see cref="PaneModel"/>。</returns>
+        protected virtual PaneModel ToPaneModel(TPane pane, bool trace, bool includeClaims)
+        {
+            if (pane.IsNull())
+                return null;
+
+            return LoadParent(pane.ToModel(), pane.ParentId);
+
+            // LoadParent
+            PaneModel LoadParent(PaneModel model, TIncremId parentId)
+            {
+                if (!parentId.Equals(default))
+                {
+                    var parent = ContentAccessor.Panes.Find(parentId);
+                    if (parent.IsNotNull())
+                    {
+                        model.Parent = parent.ToModel();
+
+                        if (trace)
+                            LoadParent(model.Parent, parent.ParentId);
+                    }
+                }
+
+                if (includeClaims)
+                {
+                    var paneClaims = ContentAccessor.PaneClaims
+                        .Where(p => p.PaneId.Equals(pane.Id))
+                        .ToList();
+
+                    if (paneClaims.IsNotEmpty())
+                    {
+                        var claims = paneClaims.Select(s => s.ClaimId).Distinct()
+                            .Select(s => ContentAccessor.Claims.Find(s))
+                            .ToDictionary(ks => ks.Id, es => es.ToModel());
+
+                        model.PaneClaims = paneClaims
+                            .Select(s => s.ToModel(claim: claims[s.ClaimId]))
+                            .ToList();
+                    }
+                }
+
+                return model;
+            }
+        }
+
+        /// <summary>
+        /// 转为窗格单元模型（支持对父级进行追溯）。
+        /// </summary>
+        /// <param name="pane">给定的 <typeparamref name="TPane"/>。</param>
+        /// <returns>返回 <see cref="PaneUnitModel"/>。</returns>
+        protected virtual PaneUnitModel ToPaneUnitModel(TPane pane)
+        {
+            var paneModel = ToPaneModel(pane, trace: false, includeClaims: true);
+            if (paneModel.IsNull())
+                return null;
+
+            var query = ContentAccessor.Units.AsQueryable()
+                .Where(p => p.PaneId.Equals(pane.Id));
+
+            var totalClaim = paneModel.PaneClaims[paneModel.PaneClaims.Count - 1];
+            if (totalClaim.IsNotNull())
+                query = query.Take(int.Parse(totalClaim.ClaimValue, CultureInfo.InvariantCulture));
+
+            return new PaneUnitModel
+            {
+                Pane = paneModel,
+                Units = query.ToList().Select(s => ToUnitModel(s, includeVisitCount: true)).ToList()
+            };
         }
 
     }

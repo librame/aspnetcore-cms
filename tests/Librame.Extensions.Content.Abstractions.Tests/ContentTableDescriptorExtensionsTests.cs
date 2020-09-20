@@ -38,7 +38,7 @@ namespace Librame.Extensions.Content.Tests
             table = TableDescriptor.Create<ContentPane<int, Guid>>();
             Assert.Equal("Content_Panes", table.InsertContentPrefix().Name);
 
-            table = TableDescriptor.Create<ContentPaneUnit<int, int, Guid, Guid>>();
+            table = TableDescriptor.Create<ContentPaneClaim<int, int, Guid, Guid>>();
             Assert.Equal("Content_PaneUnits", table.InsertContentPrefix().Name);
         }
 

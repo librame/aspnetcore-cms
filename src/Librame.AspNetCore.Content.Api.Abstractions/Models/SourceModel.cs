@@ -15,13 +15,8 @@ namespace Librame.AspNetCore.Content.Api.Models
     /// <summary>
     /// 来源模型。
     /// </summary>
-    public class SourceModel
+    public class SourceModel : AbstractCreationModel
     {
-        /// <summary>
-        /// 标识。
-        /// </summary>
-        public string Id { get; set; }
-
         /// <summary>
         /// 名称。
         /// </summary>
@@ -41,16 +36,6 @@ namespace Librame.AspNetCore.Content.Api.Models
         /// 网标。
         /// </summary>
         public string Weblogo { get; set; }
-
-        /// <summary>
-        /// 创建时间。
-        /// </summary>
-        public string CreatedTime { get; set; }
-
-        /// <summary>
-        /// 创建者。
-        /// </summary>
-        public string CreatedBy { get; set; }
 
 
         /// <summary>

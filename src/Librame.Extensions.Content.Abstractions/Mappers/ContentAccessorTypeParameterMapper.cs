@@ -41,7 +41,7 @@ namespace Librame.Extensions.Content.Mappers
 
 
         /// <summary>
-        /// 分类映射。
+        /// 类别映射。
         /// </summary>
         public TypeParameterMapping Category
             => GetGenericMapping(nameof(Category));
@@ -95,9 +95,9 @@ namespace Librame.Extensions.Content.Mappers
             => GetGenericMapping(nameof(Pane));
 
         /// <summary>
-        /// 窗格单元映射。
+        /// 窗格声明映射。
         /// </summary>
-        public TypeParameterMapping PaneUnit
-            => GetGenericMapping(nameof(PaneUnit));
+        public TypeParameterMapping PaneClaim
+            => GetGenericMapping(nameof(PaneClaim));
     }
 }

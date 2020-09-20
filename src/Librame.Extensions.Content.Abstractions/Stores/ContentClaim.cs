@@ -21,19 +21,19 @@ namespace Librame.Extensions.Content.Stores
     using Data.Stores;
 
     /// <summary>
-    /// 内容声明。
+    /// 声明。
     /// </summary>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
-    /// <typeparam name="TCategoryId">指定的分类标识类型。</typeparam>
+    /// <typeparam name="TCategoryId">指定的类别标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    [Description("内容声明")]
+    [Description("声明")]
     public class ContentClaim<TIncremId, TCategoryId, TCreatedBy> : AbstractIdentifierEntityCreation<TIncremId, TCreatedBy>
         where TIncremId : IEquatable<TIncremId>
         where TCategoryId : IEquatable<TCategoryId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
-        /// 分类标识。
+        /// 类别标识。
         /// </summary>
         [Display(Name = nameof(CategoryId), ResourceType = typeof(AbstractContentResource))]
         public virtual TCategoryId CategoryId { get; set; }

@@ -13,15 +13,10 @@
 namespace Librame.AspNetCore.Content.Api.Models
 {
     /// <summary>
-    /// 分类模型。
+    /// 类别模型。
     /// </summary>
-    public class CategoryModel
+    public class CategoryModel : AbstractCreationModel
     {
-        /// <summary>
-        /// 标识。
-        /// </summary>
-        public string Id { get; set; }
-
         /// <summary>
         /// 名称。
         /// </summary>
@@ -31,16 +26,6 @@ namespace Librame.AspNetCore.Content.Api.Models
         /// 描述。
         /// </summary>
         public string Description { get; set; }
-
-        /// <summary>
-        /// 创建时间。
-        /// </summary>
-        public string CreatedTime { get; set; }
-
-        /// <summary>
-        /// 创建者。
-        /// </summary>
-        public string CreatedBy { get; set; }
 
 
         /// <summary>

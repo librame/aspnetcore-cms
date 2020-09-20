@@ -19,7 +19,7 @@ namespace Librame.Extensions.Content.Stores
     /// <summary>
     /// 声明存储接口。
     /// </summary>
-    /// <typeparam name="TClaim">指定的内容声明类型。</typeparam>
+    /// <typeparam name="TClaim">指定的声明类型。</typeparam>
     public interface IClaimStore<TClaim> : IStore
         where TClaim : class
     {

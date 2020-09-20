@@ -15,12 +15,12 @@ namespace Librame.AspNetCore.Content.Api.Models
     /// <summary>
     /// 单元标签模型。
     /// </summary>
-    public class UnitTagModel
+    public class UnitTagModel : AbstractIdentifierModel
     {
-        ///// <summary>
-        ///// 单元模型。
-        ///// </summary>
-        //public UnitModel Unit { get; set; }
+        /// <summary>
+        /// 单元模型。
+        /// </summary>
+        public UnitModel Unit { get; set; }
 
         /// <summary>
         /// 标签模型。

@@ -31,72 +31,72 @@ namespace Librame.Extensions.Content.Accessors
         /// <summary>
         /// 配置内容存储集合。
         /// </summary>
-        /// <typeparam name="TCategory">指定的内容分类类型。</typeparam>
-        /// <typeparam name="TSource">指定的内容来源类型。</typeparam>
-        /// <typeparam name="TClaim">指定的内容声明类型。</typeparam>
-        /// <typeparam name="TTag">指定的内容标签类型。</typeparam>
-        /// <typeparam name="TUnit">指定的内容单元类型。</typeparam>
-        /// <typeparam name="TUnitClaim">指定的内容单元声明类型。</typeparam>
-        /// <typeparam name="TUnitTag">指定的内容单元标签类型。</typeparam>
-        /// <typeparam name="TUnitVisitCount">指定的内容单元访问计数类型。</typeparam>
-        /// <typeparam name="TPane">指定的内容窗格类型。</typeparam>
-        /// <typeparam name="TPaneUnit">指定的内容单元类型。</typeparam>
+        /// <typeparam name="TCategory">指定的类别类型。</typeparam>
+        /// <typeparam name="TSource">指定的来源类型。</typeparam>
+        /// <typeparam name="TClaim">指定的声明类型。</typeparam>
+        /// <typeparam name="TTag">指定的标签类型。</typeparam>
+        /// <typeparam name="TUnit">指定的单元类型。</typeparam>
+        /// <typeparam name="TUnitClaim">指定的单元声明类型。</typeparam>
+        /// <typeparam name="TUnitTag">指定的单元标签类型。</typeparam>
+        /// <typeparam name="TUnitVisitCount">指定的单元访问计数类型。</typeparam>
+        /// <typeparam name="TPane">指定的窗格类型。</typeparam>
+        /// <typeparam name="TPaneClaim">指定的窗格声明类型。</typeparam>
         /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static void ConfigureContentStores<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TGenId, TIncremId, TPublishedBy>
-            (this ModelBuilder modelBuilder, ContentDbContextAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TGenId, TIncremId, TPublishedBy> accessor)
+        public static void ConfigureContentStores<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim, TGenId, TIncremId, TPublishedBy>
+            (this ModelBuilder modelBuilder, ContentDbContextAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim, TGenId, TIncremId, TPublishedBy> accessor)
             where TCategory : ContentCategory<TIncremId, TPublishedBy>
             where TSource : ContentSource<TIncremId, TPublishedBy>
             where TClaim : ContentClaim<TIncremId, TIncremId, TPublishedBy>
             where TTag : ContentTag<TIncremId, TPublishedBy>
-            where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>
+            where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TIncremId, TPublishedBy>
             where TUnitClaim : ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>
             where TUnitTag : ContentUnitTag<TIncremId, TGenId, TIncremId>
             where TUnitVisitCount : ContentUnitVisitCount<TGenId>
             where TPane : ContentPane<TIncremId, TPublishedBy>
-            where TPaneUnit : ContentPaneUnit<TIncremId, TIncremId, TGenId, TPublishedBy>
+            where TPaneClaim : ContentPaneClaim<TIncremId, TIncremId, TIncremId, TPublishedBy>
             where TGenId : IEquatable<TGenId>
             where TIncremId : IEquatable<TIncremId>
             where TPublishedBy : IEquatable<TPublishedBy>
             => modelBuilder.ConfigureContentStores<TCategory, TSource, TClaim, TTag,
-                TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit,
+                TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim,
                 TGenId, TIncremId, TPublishedBy>(accessor as DbContextAccessorBase);
 
         /// <summary>
         /// 配置内容存储集合。
         /// </summary>
-        /// <typeparam name="TCategory">指定的内容分类类型。</typeparam>
-        /// <typeparam name="TSource">指定的内容来源类型。</typeparam>
-        /// <typeparam name="TClaim">指定的内容声明类型。</typeparam>
-        /// <typeparam name="TTag">指定的内容标签类型。</typeparam>
-        /// <typeparam name="TUnit">指定的内容单元类型。</typeparam>
-        /// <typeparam name="TUnitClaim">指定的内容单元声明类型。</typeparam>
-        /// <typeparam name="TUnitTag">指定的内容单元标签类型。</typeparam>
-        /// <typeparam name="TUnitVisitCount">指定的内容单元访问计数类型。</typeparam>
-        /// <typeparam name="TPane">指定的内容窗格类型。</typeparam>
-        /// <typeparam name="TPaneUnit">指定的内容单元类型。</typeparam>
+        /// <typeparam name="TCategory">指定的类别类型。</typeparam>
+        /// <typeparam name="TSource">指定的来源类型。</typeparam>
+        /// <typeparam name="TClaim">指定的声明类型。</typeparam>
+        /// <typeparam name="TTag">指定的标签类型。</typeparam>
+        /// <typeparam name="TUnit">指定的单元类型。</typeparam>
+        /// <typeparam name="TUnitClaim">指定的单元声明类型。</typeparam>
+        /// <typeparam name="TUnitTag">指定的单元标签类型。</typeparam>
+        /// <typeparam name="TUnitVisitCount">指定的单元访问计数类型。</typeparam>
+        /// <typeparam name="TPane">指定的窗格类型。</typeparam>
+        /// <typeparam name="TPaneClaim">指定的窗格声明类型。</typeparam>
         /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static void ConfigureContentStores<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TGenId, TIncremId, TPublishedBy>
+        public static void ConfigureContentStores<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim, TGenId, TIncremId, TPublishedBy>
             (this ModelBuilder modelBuilder, DbContextAccessorBase accessor)
             where TCategory : ContentCategory<TIncremId, TPublishedBy>
             where TSource : ContentSource<TIncremId, TPublishedBy>
             where TClaim : ContentClaim<TIncremId, TIncremId, TPublishedBy>
             where TTag : ContentTag<TIncremId, TPublishedBy>
-            where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>
+            where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TIncremId, TPublishedBy>
             where TUnitClaim : ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>
             where TUnitTag : ContentUnitTag<TIncremId, TGenId, TIncremId>
             where TUnitVisitCount : ContentUnitVisitCount<TGenId>
             where TPane : ContentPane<TIncremId, TPublishedBy>
-            where TPaneUnit : ContentPaneUnit<TIncremId, TIncremId, TGenId, TPublishedBy>
+            where TPaneClaim : ContentPaneClaim<TIncremId, TIncremId, TIncremId, TPublishedBy>
             where TGenId : IEquatable<TGenId>
             where TIncremId : IEquatable<TIncremId>
             where TPublishedBy : IEquatable<TPublishedBy>
@@ -181,6 +181,7 @@ namespace Librame.Extensions.Content.Accessors
 
                 if (mapRelationship)
                 {
+                    b.HasMany<TPaneClaim>().WithOne().HasForeignKey(fk => fk.ClaimId).IsRequired();
                     b.HasMany<TUnitClaim>().WithOne().HasForeignKey(fk => fk.ClaimId).IsRequired();
                 }
             });
@@ -227,13 +228,13 @@ namespace Librame.Extensions.Content.Accessors
 
                 b.Property(p => p.Title).HasMaxLength(256).IsRequired();
                 b.Property(p => p.Subtitle).HasMaxLength(256);
-                b.Property(p => p.Tags).HasMaxLength(256);
                 b.Property(p => p.Reference).HasMaxLength(256);
                 b.Property(p => p.PublishedAs).HasMaxLength(256);
 
                 if (mapRelationship)
                 {
                     b.HasMany<TCategory>().WithOne().HasForeignKey(fk => fk.Id).IsRequired();
+                    b.HasMany<TPane>().WithOne().HasForeignKey(fk => fk.Id).IsRequired();
                     b.HasMany<TSource>().WithOne().HasForeignKey(fk => fk.Id).IsRequired();
                     b.HasMany<TUnitClaim>().WithOne().HasForeignKey(fk => fk.UnitId).IsRequired();
                     b.HasMany<TUnitVisitCount>().WithOne().HasForeignKey(fk => fk.UnitId).IsRequired();
@@ -259,8 +260,8 @@ namespace Librame.Extensions.Content.Accessors
 
                 if (mapRelationship)
                 {
-                    b.HasMany<TUnit>().WithOne().HasForeignKey(fk => fk.Id).IsRequired();
                     b.HasMany<TClaim>().WithOne().HasForeignKey(fk => fk.Id).IsRequired();
+                    b.HasMany<TUnit>().WithOne().HasForeignKey(fk => fk.Id).IsRequired();
                 }
             });
 
@@ -282,8 +283,8 @@ namespace Librame.Extensions.Content.Accessors
 
                 if (mapRelationship)
                 {
-                    b.HasMany<TUnit>().WithOne().HasForeignKey(fk => fk.Id).IsRequired();
                     b.HasMany<TTag>().WithOne().HasForeignKey(fk => fk.Id).IsRequired();
+                    b.HasMany<TUnit>().WithOne().HasForeignKey(fk => fk.Id).IsRequired();
                 }
             });
 
@@ -336,28 +337,31 @@ namespace Librame.Extensions.Content.Accessors
 
                 if (mapRelationship)
                 {
-                    b.HasMany<TPaneUnit>().WithOne().HasForeignKey(fk => fk.PaneId).IsRequired();
+                    b.HasMany<TPaneClaim>().WithOne().HasForeignKey(fk => fk.PaneId).IsRequired();
+                    b.HasMany<TUnit>().WithOne().HasForeignKey(fk => fk.PaneId).IsRequired();
                 }
             });
 
-            modelBuilder.Entity<TPaneUnit>(b =>
+            modelBuilder.Entity<TPaneClaim>(b =>
             {
                 b.ToTable(table =>
                 {
                     if (useContentPrefix)
                         table.InsertContentPrefix();
 
-                    table.Configure(options.Tables.Pane);
+                    table.Configure(options.Tables.PaneClaim);
                 });
 
                 b.HasKey(k => k.Id);
 
-                b.HasIndex(i => new { i.PaneId, i.UnitId }).HasName().IsUnique();
+                b.HasIndex(i => new { i.PaneId, i.ClaimId }).HasName();
 
                 b.Property(p => p.Id).ValueGeneratedOnAdd();
+                b.Property(p => p.ClaimValue).IsRequired(); // 不限长度
 
                 if (mapRelationship)
                 {
+                    b.HasMany<TClaim>().WithOne().HasForeignKey(fk => fk.Id).IsRequired();
                     b.HasMany<TPane>().WithOne().HasForeignKey(fk => fk.Id).IsRequired();
                 }
             });

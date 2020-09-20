@@ -43,8 +43,8 @@ namespace Librame.Extensions.Content.Tests
         public IList<ContentPane<int, Guid>> GetPanes()
             => Accessor.Panes.ToList();
 
-        public IList<ContentPaneUnit<int, int, Guid, Guid>> GetPaneUnits()
-            => Accessor.PaneUnits.ToList();
+        public IList<ContentPaneClaim<int, int, Guid, Guid>> GetPaneUnits()
+            => Accessor.PaneClaims.ToList();
 
 
         public TestStoreHub UseWriteDbConnection()

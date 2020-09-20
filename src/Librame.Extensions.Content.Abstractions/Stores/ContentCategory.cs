@@ -25,11 +25,11 @@ namespace Librame.Extensions.Content.Stores
     using Data.Stores;
 
     /// <summary>
-    /// 内容分类。
+    /// 类别。
     /// </summary>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    [Description("内容分类")]
+    [Description("类别")]
     public class ContentCategory<TIncremId, TCreatedBy> : AbstractIdentifierEntityCreation<TIncremId, TCreatedBy>,
         IParentIdentifier<TIncremId>
         where TIncremId : IEquatable<TIncremId>

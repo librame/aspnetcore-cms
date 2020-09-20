@@ -21,27 +21,36 @@ namespace Librame.Extensions.Content.Options
     public class ContentStoreInitializationOptions
     {
         /// <summary>
-        /// 默认分类字典集合（值元组分别表示父名称、备注；空父名称表示为根分类）。
+        /// 默认总数（如：窗格的单元数据条数）。
+        /// </summary>
+        public int DefaultTotal { get; set; }
+            = 20;
+
+
+        /// <summary>
+        /// 默认类别字典集合（值元组分别表示父名称、备注；空父名称表示为根类别）。
         /// </summary>
         [SuppressMessage("Usage", "CA2227:集合属性应为只读")]
         public Dictionary<string, (string parentName, string description)> DefaultCategories { get; set; }
             = new Dictionary<string, (string parentName, string description)>
             {
-                { "文章", ( null, "文章 (Article)" ) },
-                { "文集", ( null, "文集 (Anthology)" ) },
-                { "图片", ( null, "图片 (Picture)" ) },
-                { "图册", ( null, "图册 (Album)" ) },
-                { "专题", ( null, "专题 (Subject)" ) }
+                { "文章", ( null, "文章类别 (Article)" ) },
+                { "文集", ( null, "文集类别 (Anthology)" ) },
+                { "图片", ( null, "图片类别 (Picture)" ) },
+                { "图册", ( null, "图册类别 (Album)" ) },
+                { "专题", ( null, "专题类别 (Subject)" ) }
             };
 
         /// <summary>
-        /// 默认声明字典集合（值元组分别表示分类名称、备注；空分类名称表示不限制分类，即所有分类）。
+        /// 默认声明字典集合（值元组分别表示类别名称、备注；空类别名称表示不限制类别，即所有类别）。
         /// </summary>
         [SuppressMessage("Usage", "CA2227:集合属性应为只读")]
         public Dictionary<string, (string categoryName, string description)> DefaultClaims { get; set; }
             = new Dictionary<string, (string categoryName, string description)>
             {
-                { "正文", ( null, "正文 (Text)" ) }
+                { "正文", ( null, "正文声明 (Text)" ) },
+                { "模板", ( null, "模板声明 (Template)" ) },
+                { "总数", ( null, "总数声明 (Total)" ) }
             };
 
         /// <summary>
@@ -51,8 +60,7 @@ namespace Librame.Extensions.Content.Options
         public Dictionary<string, (string parentName, string description)> DefaultPanes { get; set; }
             = new Dictionary<string, (string parentName, string description)>
             {
-                { "首页", ( null, "系统首页" ) },
-                { "友链", ( "首页", "友情链接" ) },
+                { "友链", ( null, "友情链接" ) },
                 { "快讯", ( null, "最新消息" ) },
                 { "焦点", ( null, "最热排行" ) }
             };

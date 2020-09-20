@@ -31,7 +31,6 @@ namespace Librame.AspNetCore.Content.Api.Types
             Field(f => f.Id);
             Field(f => f.Title);
             Field(f => f.Subtitle);
-            Field(f => f.Tags);
             Field(f => f.Reference);
             Field(f => f.PublishedAs);
             Field(f => f.PublishedTime);
@@ -39,11 +38,12 @@ namespace Librame.AspNetCore.Content.Api.Types
             Field(f => f.CreatedTime);
             Field(f => f.CreatedBy);
 
-            Field(f => f.Category, type: typeof(CategoryType));
-            Field(f => f.Source, type: typeof(SourceType));
-            Field(f => f.UnitVisitCount, type: typeof(UnitVisitCountType));
-            Field(f => f.UnitClaims, type: typeof(ListGraphType<UnitClaimType>));
-            Field(f => f.UnitTags, type: typeof(ListGraphType<UnitTagType>));
+            Field(f => f.Category, type: typeof(CategoryType), nullable: true);
+            Field(f => f.Pane, type: typeof(PaneType), nullable: true);
+            Field(f => f.Source, type: typeof(SourceType), nullable: true);
+            Field(f => f.UnitVisitCount, type: typeof(UnitVisitCountType), nullable: true);
+            Field(f => f.UnitClaims, type: typeof(ListGraphType<UnitClaimType>), nullable: true);
+            Field(f => f.UnitTags, type: typeof(ListGraphType<UnitTagType>), nullable: true);
         }
 
     }

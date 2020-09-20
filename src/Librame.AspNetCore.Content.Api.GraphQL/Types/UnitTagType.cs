@@ -26,7 +26,10 @@ namespace Librame.AspNetCore.Content.Api.Types
         public UnitTagType()
             : base()
         {
-            Field(f => f.Tag, type: typeof(TagType));
+            Field(f => f.Id);
+
+            Field(f => f.Unit, type: typeof(UnitType), nullable: true);
+            Field(f => f.Tag, type: typeof(TagType), nullable: true);
         }
 
     }

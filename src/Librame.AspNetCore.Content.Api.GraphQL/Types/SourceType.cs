@@ -34,7 +34,7 @@ namespace Librame.AspNetCore.Content.Api.Types
             Field(f => f.CreatedTime);
             Field(f => f.CreatedBy);
 
-            Field(f => f.Parent, type: typeof(SourceType));
+            Field(f => f.Parent, type: typeof(SourceType), nullable: true);
         }
 
     }

@@ -19,11 +19,11 @@ namespace Librame.Extensions.Content.Stores
     /// <summary>
     /// 窗格存储接口。
     /// </summary>
-    /// <typeparam name="TPane">指定的内容窗格类型。</typeparam>
-    /// <typeparam name="TPaneUnit">指定的内容窗格单元类型。</typeparam>
-    public interface IPaneStore<TPane, TPaneUnit> : IStore
+    /// <typeparam name="TPane">指定的窗格类型。</typeparam>
+    /// <typeparam name="TPaneClaim">指定的窗格声明类型。</typeparam>
+    public interface IPaneStore<TPane, TPaneClaim> : IStore
         where TPane : class
-        where TPaneUnit : class
+        where TPaneClaim : class
     {
         /// <summary>
         /// 窗格查询。
@@ -32,9 +32,9 @@ namespace Librame.Extensions.Content.Stores
         IQueryable<TPane> Panes { get; }
 
         /// <summary>
-        /// 窗格单元查询。
+        /// 窗格声明查询。
         /// </summary>
-        /// <value>返回 <see cref="IQueryable{TPaneUnit}"/>。</value>
-        IQueryable<TPaneUnit> PaneUnits { get; }
+        /// <value>返回 <see cref="IQueryable{TPaneClaim}"/>。</value>
+        IQueryable<TPaneClaim> PaneClaims { get; }
     }
 }

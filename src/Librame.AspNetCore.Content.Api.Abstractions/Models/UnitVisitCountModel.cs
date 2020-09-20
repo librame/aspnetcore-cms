@@ -17,11 +17,6 @@ namespace Librame.AspNetCore.Content.Api.Models
     /// </summary>
     public class UnitVisitCountModel
     {
-        ///// <summary>
-        ///// 单元模型。
-        ///// </summary>
-        //public UnitModel Unit { get; set; }
-
         /// <summary>
         /// 转发次数。
         /// </summary>
@@ -52,5 +47,11 @@ namespace Librame.AspNetCore.Content.Api.Models
         /// 访问人数。
         /// </summary>
         public string VisitorCount { get; set; }
+
+
+        /// <summary>
+        /// 单元模型。
+        /// </summary>
+        public UnitModel Unit { get; set; }
     }
 }

@@ -35,7 +35,7 @@ namespace Librame.Extensions.Content.Resources
         public string Tags { get; set; }
 
         /// <summary>
-        /// 分类标识。
+        /// 类别标识。
         /// </summary>
         public string CategoryId { get; set; }
 
@@ -43,6 +43,11 @@ namespace Librame.Extensions.Content.Resources
         /// 来源标识。
         /// </summary>
         public string SourceId { get; set; }
+
+        /// <summary>
+        /// 窗格标识。
+        /// </summary>
+        public string PaneId { get; set; }
 
         /// <summary>
         /// 单元标识。
@@ -93,10 +98,5 @@ namespace Librame.Extensions.Content.Resources
         /// 更多。
         /// </summary>
         public string More { get; set; }
-
-        /// <summary>
-        /// 窗格标识。
-        /// </summary>
-        public string PaneId { get; set; }
     }
 }

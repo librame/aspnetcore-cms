@@ -20,25 +20,24 @@ namespace Librame.Extensions.Content.Stores
     using Data.Stores;
 
     /// <summary>
-    /// 单元声明。
+    /// 窗格声明。
     /// </summary>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
-    /// <typeparam name="TUnitId">指定的单元标识类型。</typeparam>
+    /// <typeparam name="TPaneId">指定的窗格标识类型。</typeparam>
     /// <typeparam name="TClaimId">指定的声明标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    [Description("单元声明")]
-    public class ContentUnitClaim<TIncremId, TUnitId, TClaimId, TCreatedBy>
-        : AbstractIdentifierEntityCreation<TIncremId, TCreatedBy>
+    [Description("窗格声明")]
+    public class ContentPaneClaim<TIncremId, TPaneId, TClaimId, TCreatedBy> : AbstractIdentifierEntityCreation<TIncremId, TCreatedBy>
         where TIncremId : IEquatable<TIncremId>
-        where TUnitId : IEquatable<TUnitId>
+        where TPaneId : IEquatable<TPaneId>
         where TClaimId : IEquatable<TClaimId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
-        /// 单元标识。
+        /// 窗格标识。
         /// </summary>
-        [Display(Name = nameof(UnitId), ResourceType = typeof(AbstractContentResource))]
-        public virtual TUnitId UnitId { get; set; }
+        [Display(Name = nameof(PaneId), ResourceType = typeof(AbstractContentResource))]
+        public virtual TPaneId PaneId { get; set; }
 
         /// <summary>
         /// 声明标识。
@@ -47,7 +46,7 @@ namespace Librame.Extensions.Content.Stores
         public virtual TClaimId ClaimId { get; set; }
 
         /// <summary>
-        /// 单元声明值。
+        /// 窗格声明值。
         /// </summary>
         [Display(Name = nameof(ClaimValue), ResourceType = typeof(AbstractContentResource))]
         public virtual string ClaimValue { get; set; }

@@ -26,9 +26,11 @@ namespace Librame.AspNetCore.Content.Api.Types
         public UnitClaimType()
             : base()
         {
-            Field(f => f.Value);
+            Field(f => f.Id);
+            Field(f => f.ClaimValue);
 
-            Field(f => f.Claim, type: typeof(ClaimType));
+            Field(f => f.Unit, type: typeof(UnitType), nullable: true);
+            Field(f => f.Claim, type: typeof(ClaimType), nullable: true);
         }
 
     }

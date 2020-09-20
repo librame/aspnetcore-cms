@@ -19,7 +19,7 @@ namespace Librame.Extensions.Content.Stores
     /// <summary>
     /// 标签存储接口。
     /// </summary>
-    /// <typeparam name="TTag">指定的内容标签类型。</typeparam>
+    /// <typeparam name="TTag">指定的标签类型。</typeparam>
     public interface ITagStore<TTag> : IStore
         where TTag : class
     {

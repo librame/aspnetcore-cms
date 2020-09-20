@@ -32,7 +32,7 @@ namespace Librame.AspNetCore.Content.Api.Types
             Field(f => f.CreatedTime);
             Field(f => f.CreatedBy);
 
-            Field(f => f.Category, type: typeof(CategoryType));
+            Field(f => f.Category, type: typeof(CategoryType), nullable: true);
         }
 
     }

@@ -10,27 +10,23 @@
 
 #endregion
 
+using System.Collections.Generic;
+
 namespace Librame.AspNetCore.Content.Api.Models
 {
     /// <summary>
-    /// 声明模型。
+    /// 面板单元模型（主要用于首页）。
     /// </summary>
-    public class ClaimModel : AbstractCreationModel
+    public class PaneUnitModel
     {
         /// <summary>
-        /// 名称。
+        /// 窗格模型。
         /// </summary>
-        public string Name { get; set; }
+        public PaneModel Pane { get; set; }
 
         /// <summary>
-        /// 描述。
+        /// 单元模型列表。
         /// </summary>
-        public string Description { get; set; }
-
-
-        /// <summary>
-        /// 类别模型。
-        /// </summary>
-        public CategoryModel Category { get; set; }
+        public IReadOnlyList<UnitModel> Units { get; set; }
     }
 }

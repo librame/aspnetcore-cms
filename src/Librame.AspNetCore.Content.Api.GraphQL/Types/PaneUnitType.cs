@@ -10,26 +10,26 @@
 
 #endregion
 
+using GraphQL.Types;
+
 namespace Librame.AspNetCore.Content.Api.Types
 {
     using AspNetCore.Api.Types;
     using AspNetCore.Content.Api.Models;
 
     /// <summary>
-    /// 登入输入类型。
+    /// 窗格单元类型。
     /// </summary>
-    public class CategoryInputType : ApiInputTypeBase<CategoryModel>
+    public class PaneUnitType : ApiTypeBase<PaneUnitModel>
     {
         /// <summary>
-        /// 构造一个 <see cref="CategoryInputType"/>。
+        /// 构造一个窗格单元类型。
         /// </summary>
-        public CategoryInputType()
+        public PaneUnitType()
             : base()
         {
-            Field(f => f.Name);
-            Field(f => f.Description);
-
-            Field(f => f.Parent, nullable: true);
+            Field(f => f.Pane, type: typeof(PaneType));
+            Field(f => f.Units, type: typeof(ListGraphType<UnitType>));
         }
 
     }

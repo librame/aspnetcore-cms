@@ -11,147 +11,113 @@
 #endregion
 
 using GraphQL.Types;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace Librame.AspNetCore.Content.Api
 {
     using AspNetCore.Api;
     using AspNetCore.Content.Api.Models;
     using AspNetCore.Content.Api.Types;
-    using AspNetCore.Content.Api.Resources;
-    using AspNetCore.Content.Stores;
     using Extensions;
-    using Extensions.Core.Combiners;
-    using Extensions.Core.Identifiers;
-    using Extensions.Core.Localizers;
+    using Extensions.Content.Accessors;
+    using Extensions.Content.Builders;
+    using Extensions.Content.Stores;
     using Extensions.Core.Services;
-    using Extensions.Data.Stores;
-    using Extensions.Network.Services;
+    using Extensions.Data.Accessors;
+    using Extensions.Data.Collections;
 
-    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
-    internal class ContentGraphApiMutation<TUser, TGenId, TCreatedBy> : ObjectGraphType, IGraphApiMutation
-        where TUser : class, IIdentifier<TGenId>, ICreation<TCreatedBy>
+    /// <summary>
+    /// 内容图形 API 变化。
+    /// </summary>
+    /// <typeparam name="TCategory">指定的类别类型。</typeparam>
+    /// <typeparam name="TSource">指定的来源类型。</typeparam>
+    /// <typeparam name="TClaim">指定的声明类型。</typeparam>
+    /// <typeparam name="TTag">指定的标签类型。</typeparam>
+    /// <typeparam name="TUnit">指定的单元类型。</typeparam>
+    /// <typeparam name="TUnitClaim">指定的单元声明类型。</typeparam>
+    /// <typeparam name="TUnitTag">指定的单元标签类型。</typeparam>
+    /// <typeparam name="TUnitVisitCount">指定的单元访问计数类型。</typeparam>
+    /// <typeparam name="TPane">指定的窗格类型。</typeparam>
+    /// <typeparam name="TPaneClaim">指定的窗格声明类型。</typeparam>
+    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+    /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+    /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
+    public class ContentGraphApiMutation<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim, TGenId, TIncremId, TPublishedBy> : GraphApiMutationBase
+        where TCategory : ContentCategory<TIncremId, TPublishedBy>
+        where TSource : ContentSource<TIncremId, TPublishedBy>
+        where TClaim : ContentClaim<TIncremId, TIncremId, TPublishedBy>
+        where TTag : ContentTag<TIncremId, TPublishedBy>
+        where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TIncremId, TPublishedBy>
+        where TUnitClaim : ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>
+        where TUnitTag : ContentUnitTag<TIncremId, TGenId, TIncremId>
+        where TUnitVisitCount : ContentUnitVisitCount<TGenId>
+        where TPane : ContentPane<TIncremId, TPublishedBy>
+        where TPaneClaim : ContentPaneClaim<TIncremId, TIncremId, TIncremId, TPublishedBy>
         where TGenId : IEquatable<TGenId>
-        where TCreatedBy : IEquatable<TCreatedBy>
+        where TIncremId : IEquatable<TIncremId>
+        where TPublishedBy : IEquatable<TPublishedBy>
     {
-        [InjectionService]
-        private ILogger<ContentGraphApiMutation<TUser, TGenId, TCreatedBy>> _logger = null;
-
-
-        public ContentGraphApiMutation(IInjectionService injectionService)
+        /// <summary>
+        /// 构造一个内容图形 API 变化。
+        /// </summary>
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public ContentGraphApiMutation(IAccessor accessor, ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
-            injectionService.Inject(this);
+            ContentAccessor = accessor.CastTo<IAccessor,
+                IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim>>(nameof(accessor));
 
-            Name = nameof(ISchema.Mutation);
-
-            AddLoginTypeField();
-
-            AddRegisterTypeField();
+            AddCategoryTypeField();
         }
 
 
-        private void AddLoginTypeField()
+        /// <summary>
+        /// 内容访问器。
+        /// </summary>
+        protected IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim> ContentAccessor { get; }
+
+
+        private void AddCategoryTypeField()
         {
+            // "query": "mutation($category:CategoryInput!) { addCategory(category: $category) { id... }}",
+            // "variables": {
+            //     "category": {
+            //         "name": "",
+            //         "description": "",
+            //         "parent": null
+            //     }
+            // }
             FieldAsync<CategoryType>
             (
-                name: "login",
+                name: "addCategory",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<CategoryInputType>> { Name = "user" }
+                    new QueryArgument<NonNullGraphType<CategoryInputType>> { Name = "category" }
                 ),
                 resolve: async context =>
                 {
-                    var model = context.GetArgument<LoginApiModel>("user");
+                    var model = context.GetArgument<CategoryModel>("category");
+                    var category = model.FromModel<TCategory, TIncremId, TPublishedBy>(parentName
+                        => ContentAccessor.Categories.FirstOrDefault(p => p.Name == parentName));
 
-                    var result = await _signInManager.PasswordSignInAsync(model.Email,
-                        model.Password, model.RememberMe, lockoutOnFailure: false).ConfigureAndResultAsync();
-
-                    if (result.Succeeded)
-                    {
-                        model.Message = "User logged in.";
-                    }
-                    if (result.RequiresTwoFactor)
-                    {
-                        model.Message = "Need requires two factor.";
-                        model.RedirectUrl = "./LoginWith2fa";
-                    }
-                    if (result.IsLockedOut)
-                    {
-                        model.Message = "User account locked out.";
-                        model.RedirectUrl = "./Lockout";
-                    }
-                    else
-                    {
-                        model.IsError = true;
-                        model.Message = "Invalid login attempt.";
-                    }
-
-                    return model.Log(_logger);
-                }
-            );
-        }
-
-        private void AddRegisterTypeField()
-        {
-            FieldAsync<RegisterType>
-            (
-                name: "addUser",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<RegisterInputType>> { Name = "user" }
-                ),
-                resolve: async context =>
-                {
-                    var model = context.GetArgument<RegisterApiModel>("user");
-
-                    var user = typeof(TUser).EnsureCreate<TUser>();
-
-                    var userId = await _identifierGenerator.GenerateUserIdAsync().ConfigureAndResultAsync();
-                    await user.SetIdAsync(userId).ConfigureAndResultAsync();
-
-                    var result = await _userManager.CreateUserByEmail<TUser, TCreatedBy>(_userStore,
-                        _clock, user, model.Email, model.Password).ConfigureAndResultAsync();
-
-                    if (result.Succeeded)
-                    {
-                        model.Message = "User created a new account with password.";
-                        model.UserId = userId.ToString();
-
-                        // 确认邮件
-                        string code = await _userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAndResultAsync();
-
-                        var confirmEmailLocator = model.ConfirmEmailUrl.AsUriCombinerCore();
-                        confirmEmailLocator.ChangeQueries(queries =>
+                    await ContentAccessor.CategoriesManager.TryAddAsync(p => p.Equals(category),
+                        () => category,
+                        addedPost =>
                         {
-                            queries.AddOrUpdate("userId", model.UserId, (key, value) => model.UserId);
-                            queries.AddOrUpdate("code", code, (key, value) => code);
-                        });
-                        var confirmEmailExternalLink = HtmlEncoder.Default.Encode(confirmEmailLocator.ToString());
+                            if (!ContentAccessor.RequiredSaveChanges)
+                                ContentAccessor.RequiredSaveChanges = true;
+                        })
+                        .ConfigureAwait();
 
-                        await _emailService.SendAsync(model.Email,
-                            _localizer.GetString(r => r.ConfirmYourEmail)?.Value,
-                            _localizer.GetString(r => r.ConfirmYourEmailFormat, confirmEmailExternalLink)?.Value).ConfigureAndWaitAsync();
-                        //await userStore.GetUserEmailStore(signInManager).SetEmailAsync(user, model.Email, default);
+                    model.UpdateModel<TCategory, TIncremId, TPublishedBy>(category);
 
-                        await _signInManager.SignInAsync(user, isPersistent: false).ConfigureAndWaitAsync();
-                        _logger.LogInformation(3, "User created a new account with password.");
-                    }
-
-                    IEnumerable<ContentError> errors = result.Errors;
-                    if (errors.IsNotEmpty())
-                    {
-                        model.Errors.AddRange(errors.Select(error =>
-                        {
-                            return new Exception($"Code: {error.Code}, Description: {error.Description}");
-                        }));
-                    }
-
-                    return model.Log(_logger);
+                    return model;
                 }
             );
         }

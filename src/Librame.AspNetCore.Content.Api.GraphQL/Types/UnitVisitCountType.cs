@@ -33,6 +33,8 @@ namespace Librame.AspNetCore.Content.Api.Types
 
             Field(f => f.VisitCount);
             Field(f => f.VisitorCount);
+
+            Field(f => f.Unit, type: typeof(UnitType), nullable: true);
         }
 
     }
