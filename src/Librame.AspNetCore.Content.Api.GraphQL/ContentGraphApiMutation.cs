@@ -23,7 +23,6 @@ namespace Librame.AspNetCore.Content.Api
 {
     using AspNetCore.Api;
     using AspNetCore.Content.Api.Models;
-    using AspNetCore.Content.Api.Types;
     using Extensions;
     using Extensions.Content.Accessors;
     using Extensions.Content.Builders;
@@ -94,11 +93,11 @@ namespace Librame.AspNetCore.Content.Api
             //         "parent": null
             //     }
             // }
-            FieldAsync<CategoryType>
+            FieldAsync<CategoryModelType>
             (
                 name: "addCategory",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<CategoryInputType>> { Name = "category" }
+                    new QueryArgument<NonNullGraphType<CategoryInputModelType>> { Name = "category" }
                 ),
                 resolve: async context =>
                 {

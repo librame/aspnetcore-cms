@@ -10,26 +10,25 @@
 
 #endregion
 
-using GraphQL.Types;
-
-namespace Librame.AspNetCore.Content.Api.Types
+namespace Librame.AspNetCore.Content.Api.Models
 {
-    using AspNetCore.Api.Types;
-    using AspNetCore.Content.Api.Models;
+    using AspNetCore.Api.Models;
 
     /// <summary>
-    /// 窗格单元类型。
+    /// 单元声明模型类型。
     /// </summary>
-    public class PaneUnitType : ApiTypeBase<PaneUnitModel>
+    public class UnitClaimModelType : IdentifierModelTypeBase<UnitClaimModel>
     {
         /// <summary>
-        /// 构造一个窗格单元类型。
+        /// 构造一个 <see cref="UnitClaimModelType"/>。
         /// </summary>
-        public PaneUnitType()
+        public UnitClaimModelType()
             : base()
         {
-            Field(f => f.Pane, type: typeof(PaneType));
-            Field(f => f.Units, type: typeof(ListGraphType<UnitType>));
+            Field(f => f.ClaimValue);
+
+            Field(f => f.Unit, type: typeof(UnitModelType), nullable: true);
+            Field(f => f.Claim, type: typeof(ClaimModelType), nullable: true);
         }
 
     }

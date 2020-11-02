@@ -10,27 +10,22 @@
 
 #endregion
 
-namespace Librame.AspNetCore.Content.Api.Types
+namespace Librame.AspNetCore.Content.Api.Models
 {
-    using AspNetCore.Api.Types;
-    using AspNetCore.Content.Api.Models;
+    using AspNetCore.Api.Models;
 
     /// <summary>
-    /// 单元声明类型。
+    /// 标签模型类型。
     /// </summary>
-    public class UnitClaimType : ApiTypeBase<UnitClaimModel>
+    public class TagModelType : CreationIdentifierModelTypeBase<TagModel>
     {
         /// <summary>
-        /// 构造一个单元声明类型。
+        /// 构造一个 <see cref="TagModelType"/>。
         /// </summary>
-        public UnitClaimType()
+        public TagModelType()
             : base()
         {
-            Field(f => f.Id);
-            Field(f => f.ClaimValue);
-
-            Field(f => f.Unit, type: typeof(UnitType), nullable: true);
-            Field(f => f.Claim, type: typeof(ClaimType), nullable: true);
+            Field(f => f.Name);
         }
 
     }

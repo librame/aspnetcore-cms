@@ -17,13 +17,13 @@ namespace Librame.Extensions.Content.Tests
             table = TableDescriptor.Create<ContentSource<int, Guid>>();
             Assert.Equal("Content_Sources", table.InsertContentPrefix().Name);
 
-            table = TableDescriptor.Create<ContentClaim<int, Guid>>();
+            table = TableDescriptor.Create<ContentClaim<int, int, Guid>>();
             Assert.Equal("Content_Claims", table.InsertContentPrefix().Name);
 
             table = TableDescriptor.Create<ContentTag<int, Guid>>();
             Assert.Equal("Content_Tags", table.InsertContentPrefix().Name);
 
-            table = TableDescriptor.Create<ContentUnit<Guid, int, int, Guid>>();
+            table = TableDescriptor.Create<ContentUnit<Guid, int, int, int, Guid>>();
             Assert.Equal("Content_Units", table.InsertContentPrefix().Name);
 
             table = TableDescriptor.Create<ContentUnitClaim<int, Guid, int, Guid>>();
@@ -38,7 +38,7 @@ namespace Librame.Extensions.Content.Tests
             table = TableDescriptor.Create<ContentPane<int, Guid>>();
             Assert.Equal("Content_Panes", table.InsertContentPrefix().Name);
 
-            table = TableDescriptor.Create<ContentPaneClaim<int, int, Guid, Guid>>();
+            table = TableDescriptor.Create<ContentPaneClaim<int, int, int, Guid>>();
             Assert.Equal("Content_PaneUnits", table.InsertContentPrefix().Name);
         }
 

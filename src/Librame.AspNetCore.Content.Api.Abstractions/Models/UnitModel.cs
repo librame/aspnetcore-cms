@@ -14,10 +14,12 @@ using System.Collections.Generic;
 
 namespace Librame.AspNetCore.Content.Api.Models
 {
+    using AspNetCore.Api.Models;
+
     /// <summary>
     /// 单元模型。
     /// </summary>
-    public class UnitModel : AbstractPublicationModel
+    public class UnitModel : AbstractPublicationIdentifierModel
     {
         /// <summary>
         /// 标题。

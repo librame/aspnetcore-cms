@@ -12,6 +12,8 @@
 
 namespace Librame.AspNetCore.Content.Api.Models
 {
+    using AspNetCore.Api.Models;
+
     /// <summary>
     /// 单元声明模型。
     /// </summary>

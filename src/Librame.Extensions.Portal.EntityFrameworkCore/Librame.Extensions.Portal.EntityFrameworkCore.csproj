@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>1.0.0.1</Version>
+    <Version>1.0.1</Version>
     <Authors>Librame Pong</Authors>
     <Company>https://github.com/librame</Company>
     <Description>Based Librame.Extensions.Portal.Abstractions on EntityFrameworkCore extension implementation.</Description>
@@ -19,7 +19,7 @@
     <PackageReleaseNotes>Based Librame.Extensions.Portal.Abstractions on EntityFrameworkCore extension implementation.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.AspNetCore.Cms.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
     <FileVersion>1.0.322.19716</FileVersion>
     <RootNamespace>Librame.Extensions.Portal</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -41,7 +41,7 @@
   </ItemGroup>
     
   <ItemGroup>
-    <PackageReference Include="Librame.Extensions.Data.EntityFrameworkCore" Version="7.7.1.1" />
+    <PackageReference Include="Librame.Extensions.Data.EntityFrameworkCore" Version="7.7.3" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

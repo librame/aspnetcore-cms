@@ -27,7 +27,7 @@ namespace Librame.Extensions.Content.Stores
     /// <typeparam name="TClaimId">指定的声明标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("窗格声明")]
-    public class ContentPaneClaim<TIncremId, TPaneId, TClaimId, TCreatedBy> : AbstractIdentifierEntityCreation<TIncremId, TCreatedBy>
+    public class ContentPaneClaim<TIncremId, TPaneId, TClaimId, TCreatedBy> : AbstractEntityCreation<TIncremId, TCreatedBy>
         where TIncremId : IEquatable<TIncremId>
         where TPaneId : IEquatable<TPaneId>
         where TClaimId : IEquatable<TClaimId>

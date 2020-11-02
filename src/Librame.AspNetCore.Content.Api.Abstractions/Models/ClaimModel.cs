@@ -12,10 +12,12 @@
 
 namespace Librame.AspNetCore.Content.Api.Models
 {
+    using AspNetCore.Api.Models;
+
     /// <summary>
     /// 声明模型。
     /// </summary>
-    public class ClaimModel : AbstractCreationModel
+    public class ClaimModel : AbstractCreationIdentifierModel
     {
         /// <summary>
         /// 名称。

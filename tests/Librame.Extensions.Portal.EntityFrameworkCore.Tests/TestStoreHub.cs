@@ -29,7 +29,7 @@ namespace Librame.Extensions.Portal.Tests
         public IList<ContentTag<int, Guid>> GetTags()
             => Accessor.Tags.ToList();
 
-        public IPageable<ContentUnit<Guid, int, int, Guid>> GetUnits()
+        public IPageable<ContentUnit<Guid, int, int, int, Guid>> GetUnits()
             => Accessor.Units.AsPagingByIndex(ordered => ordered.OrderBy(k => k.Id), 1, 10);
 
         public IList<ContentUnitClaim<int, Guid, int, Guid>> GetUnitClaims()
@@ -44,7 +44,7 @@ namespace Librame.Extensions.Portal.Tests
         public IList<ContentPane<int, Guid>> GetPanes()
             => Accessor.Panes.ToList();
 
-        public IList<ContentPaneClaim<int, int, Guid, Guid>> GetPaneUnits()
+        public IList<ContentPaneClaim<int, int, int, Guid>> GetPaneUnits()
             => Accessor.PaneClaims.ToList();
 
 

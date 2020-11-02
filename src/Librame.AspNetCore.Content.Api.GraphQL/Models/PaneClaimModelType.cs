@@ -10,23 +10,26 @@
 
 #endregion
 
-using System.Collections.Generic;
-
 namespace Librame.AspNetCore.Content.Api.Models
 {
+    using AspNetCore.Api.Models;
+
     /// <summary>
-    /// 面板单元模型（主要用于首页）。
+    /// 窗格声明模型类型。
     /// </summary>
-    public class PaneUnitModel
+    public class PaneClaimModelType : IdentifierModelTypeBase<PaneClaimModel>
     {
         /// <summary>
-        /// 窗格模型。
+        /// 构造一个 <see cref="PaneClaimModelType"/>。
         /// </summary>
-        public PaneModel Pane { get; set; }
+        public PaneClaimModelType()
+            : base()
+        {
+            Field(f => f.ClaimValue);
 
-        /// <summary>
-        /// 单元模型列表。
-        /// </summary>
-        public IReadOnlyList<UnitModel> Units { get; set; }
+            Field(f => f.Pane, type: typeof(PaneModelType), nullable: true);
+            Field(f => f.Claim, type: typeof(ClaimModelType), nullable: true);
+        }
+
     }
 }

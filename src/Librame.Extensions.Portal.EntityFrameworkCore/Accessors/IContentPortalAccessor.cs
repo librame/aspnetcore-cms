@@ -54,11 +54,11 @@ namespace Librame.Extensions.Portal.Accessors
     /// <typeparam name="TUnitTag">指定的单元标签类型。</typeparam>
     /// <typeparam name="TUnitVisitCount">指定的单元访问计数类型。</typeparam>
     /// <typeparam name="TPane">指定的窗格类型。</typeparam>
-    /// <typeparam name="TPaneUnit">指定的单元类型。</typeparam>
+    /// <typeparam name="TPaneClaim">指定的窗格声明类型。</typeparam>
     /// <typeparam name="TEditor">指定的编者类型。</typeparam>
     /// <typeparam name="TInternalUser">指定的内置用户类型。</typeparam>
-    public interface IContentPortalAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TEditor, TInternalUser>
-        : IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit>,
+    public interface IContentPortalAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim, TEditor, TInternalUser>
+        : IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim>,
             IPortalAccessor<TEditor, TInternalUser>
         where TCategory : class
         where TSource : class
@@ -69,7 +69,7 @@ namespace Librame.Extensions.Portal.Accessors
         where TUnitTag : class
         where TUnitVisitCount : class
         where TPane : class
-        where TPaneUnit : class
+        where TPaneClaim : class
         where TEditor : class
         where TInternalUser : class
     {

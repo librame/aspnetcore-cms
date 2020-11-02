@@ -63,7 +63,7 @@ namespace Librame.Extensions.Content.Accessors
     /// <typeparam name="TUnitTag">指定的单元标签类型。</typeparam>
     /// <typeparam name="TUnitVisitCount">指定的单元访问计数类型。</typeparam>
     /// <typeparam name="TPane">指定的窗格类型。</typeparam>
-    /// <typeparam name="TPaneClaim">指定的单元类型。</typeparam>
+    /// <typeparam name="TPaneClaim">指定的窗格声明类型。</typeparam>
     public interface IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim>
         : IAccessor // 接口不强制继承 IAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
         where TCategory : class

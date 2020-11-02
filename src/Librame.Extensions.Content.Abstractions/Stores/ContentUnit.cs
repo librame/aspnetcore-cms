@@ -32,7 +32,7 @@ namespace Librame.Extensions.Content.Stores
     [Description("单元")]
     [Shardable]
     public class ContentUnit<TGenId, TCategoryId, TPaneId, TSourceId, TPublishedBy>
-        : AbstractIdentifierEntityPublication<TGenId, TPublishedBy>
+        : AbstractEntityPublication<TGenId, TPublishedBy>
         where TGenId : IEquatable<TGenId>
         where TCategoryId : IEquatable<TCategoryId>
         where TPaneId : IEquatable<TPaneId>

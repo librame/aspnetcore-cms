@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>1.0.0.1</Version>
+    <Version>1.0.1</Version>
     <Authors>Librame Pong</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.AspNetCore.Api.GraphQL on Content API package.</Description>
@@ -19,7 +19,7 @@
     <PackageReleaseNotes>Based Librame.AspNetCore.Api.GraphQL on Content API package.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.AspNetCore.Cms.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
     <FileVersion>1.0.322.19716</FileVersion>
     <RootNamespace>Librame.AspNetCore.Content.Api</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -39,7 +39,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Librame.AspNetCore.Api.GraphQL" Version="7.6.0.3" />
+    <PackageReference Include="Librame.AspNetCore.Api.GraphQL" Version="7.6.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

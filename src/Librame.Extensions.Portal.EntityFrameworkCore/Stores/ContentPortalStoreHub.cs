@@ -69,12 +69,12 @@ namespace Librame.Extensions.Portal.Stores
             ContentSource<TIncremId, TPublishedBy>,
             ContentClaim<TIncremId, TIncremId, TPublishedBy>,
             ContentTag<TIncremId, TPublishedBy>,
-            ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>,
+            ContentUnit<TGenId, TIncremId, TIncremId, TIncremId, TPublishedBy>,
             ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>,
             ContentUnitTag<TIncremId, TGenId, TIncremId>,
             ContentUnitVisitCount<TGenId>,
             ContentPane<TIncremId, TPublishedBy>,
-            ContentPaneClaim<TIncremId, TIncremId, TGenId, TPublishedBy>,
+            ContentPaneClaim<TIncremId, TIncremId, TIncremId, TPublishedBy>,
             PortalEditor<TGenId, TUserId, TPublishedBy>,
             PortalInternalUser<TGenId, TPublishedBy>,
             TGenId, TIncremId, TUserId, TPublishedBy>
@@ -109,27 +109,27 @@ namespace Librame.Extensions.Portal.Stores
     /// <typeparam name="TUnitTag">指定的单元标签类型。</typeparam>
     /// <typeparam name="TUnitVisitCount">指定的单元统计数据类型。</typeparam>
     /// <typeparam name="TPane">指定的窗格类型。</typeparam>
-    /// <typeparam name="TPaneUnit">指定的单元类型。</typeparam>
+    /// <typeparam name="TPaneClaim">指定的窗格声明类型。</typeparam>
     /// <typeparam name="TEditor">指定的编者类型。</typeparam>
     /// <typeparam name="TInternalUser">指定的内置用户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TUserId">指定的用户标识类型。</typeparam>
     /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
-    public class ContentPortalStoreHub<TAccessor, TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TEditor, TInternalUser, TGenId, TIncremId, TUserId, TPublishedBy>
-        : ContentStoreHub<TAccessor, TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TGenId, TIncremId, TPublishedBy>,
-        IContentPortalStoreHub<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TEditor, TInternalUser>
-        where TAccessor : ContentPortalDbContextAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneUnit, TEditor, TInternalUser, TGenId, TIncremId, TUserId, TPublishedBy>
+    public class ContentPortalStoreHub<TAccessor, TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim, TEditor, TInternalUser, TGenId, TIncremId, TUserId, TPublishedBy>
+        : ContentStoreHub<TAccessor, TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim, TGenId, TIncremId, TPublishedBy>,
+        IContentPortalStoreHub<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim, TEditor, TInternalUser>
+        where TAccessor : ContentPortalDbContextAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim, TEditor, TInternalUser, TGenId, TIncremId, TUserId, TPublishedBy>
         where TCategory : ContentCategory<TIncremId, TPublishedBy>
         where TSource : ContentSource<TIncremId, TPublishedBy>
         where TClaim : ContentClaim<TIncremId, TIncremId, TPublishedBy>
         where TTag : ContentTag<TIncremId, TPublishedBy>
-        where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TPublishedBy>
+        where TUnit : ContentUnit<TGenId, TIncremId, TIncremId, TIncremId, TPublishedBy>
         where TUnitClaim : ContentUnitClaim<TIncremId, TGenId, TIncremId, TPublishedBy>
         where TUnitTag : ContentUnitTag<TIncremId, TGenId, TIncremId>
         where TUnitVisitCount : ContentUnitVisitCount<TGenId>
         where TPane : ContentPane<TIncremId, TPublishedBy>
-        where TPaneUnit : ContentPaneClaim<TIncremId, TIncremId, TGenId, TPublishedBy>
+        where TPaneClaim : ContentPaneClaim<TIncremId, TIncremId, TIncremId, TPublishedBy>
         where TEditor : PortalEditor<TGenId, TUserId, TPublishedBy>
         where TInternalUser : PortalInternalUser<TGenId, TPublishedBy>
         where TGenId : IEquatable<TGenId>

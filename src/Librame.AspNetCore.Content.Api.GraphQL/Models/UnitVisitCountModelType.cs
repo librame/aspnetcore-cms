@@ -10,20 +10,19 @@
 
 #endregion
 
-namespace Librame.AspNetCore.Content.Api.Types
+namespace Librame.AspNetCore.Content.Api.Models
 {
-    using AspNetCore.Api.Types;
-    using AspNetCore.Content.Api.Models;
+    using AspNetCore.Api.Models;
 
     /// <summary>
-    /// 单元访问计数类型。
+    /// 单元访问计数模型类型。
     /// </summary>
-    public class UnitVisitCountType : ApiTypeBase<UnitVisitCountModel>
+    public class UnitVisitCountModelType : ModelTypeBase<UnitVisitCountModel>
     {
         /// <summary>
-        /// 构造一个单元访问计数类型。
+        /// 构造一个 <see cref="UnitVisitCountModelType"/>。
         /// </summary>
-        public UnitVisitCountType()
+        public UnitVisitCountModelType()
             : base()
         {
             Field(f => f.RetweetCount);
@@ -34,7 +33,7 @@ namespace Librame.AspNetCore.Content.Api.Types
             Field(f => f.VisitCount);
             Field(f => f.VisitorCount);
 
-            Field(f => f.Unit, type: typeof(UnitType), nullable: true);
+            Field(f => f.Unit, type: typeof(UnitModelType), nullable: true);
         }
 
     }

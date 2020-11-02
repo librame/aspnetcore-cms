@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,7 +28,6 @@ namespace Librame.Extensions.Content.Stores
     using Data.Accessors;
     using Data.Stores;
     using Data.Validators;
-    using System.Globalization;
 
     /// <summary>
     /// 内容存储初始化器。

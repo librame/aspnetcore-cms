@@ -10,29 +10,27 @@
 
 #endregion
 
-namespace Librame.AspNetCore.Content.Api.Types
+namespace Librame.AspNetCore.Content.Api.Models
 {
-    using AspNetCore.Api.Types;
-    using AspNetCore.Content.Api.Models;
+    using AspNetCore.Api.Models;
 
     /// <summary>
-    /// 类别类型。
+    /// 来源模型类型。
     /// </summary>
-    public class CategoryType : ApiTypeBase<CategoryModel>
+    public class SourceModelType : CreationIdentifierModelTypeBase<SourceModel>
     {
         /// <summary>
-        /// 构造一个类别类型。
+        /// 构造一个 <see cref="SourceModelType"/>。
         /// </summary>
-        public CategoryType()
+        public SourceModelType()
             : base()
         {
-            Field(f => f.Id);
             Field(f => f.Name);
             Field(f => f.Description);
-            Field(f => f.CreatedTime);
-            Field(f => f.CreatedBy);
+            Field(f => f.Website);
+            Field(f => f.Weblogo);
 
-            Field(f => f.Parent, type: typeof(CategoryType), nullable: true);
+            Field(f => f.Parent, type: typeof(SourceModelType), nullable: true);
         }
 
     }

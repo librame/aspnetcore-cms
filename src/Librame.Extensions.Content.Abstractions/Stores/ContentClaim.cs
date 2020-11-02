@@ -27,7 +27,7 @@ namespace Librame.Extensions.Content.Stores
     /// <typeparam name="TCategoryId">指定的类别标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("声明")]
-    public class ContentClaim<TIncremId, TCategoryId, TCreatedBy> : AbstractIdentifierEntityCreation<TIncremId, TCreatedBy>
+    public class ContentClaim<TIncremId, TCategoryId, TCreatedBy> : AbstractEntityCreation<TIncremId, TCreatedBy>
         where TIncremId : IEquatable<TIncremId>
         where TCategoryId : IEquatable<TCategoryId>
         where TCreatedBy : IEquatable<TCreatedBy>

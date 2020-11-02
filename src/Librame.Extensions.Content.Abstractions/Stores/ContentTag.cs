@@ -25,7 +25,7 @@ namespace Librame.Extensions.Content.Stores
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("标签")]
-    public class ContentTag<TIncremId, TCreatedBy> : AbstractIdentifierEntityCreation<TIncremId, TCreatedBy>
+    public class ContentTag<TIncremId, TCreatedBy> : AbstractEntityCreation<TIncremId, TCreatedBy>
         where TIncremId : IEquatable<TIncremId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {

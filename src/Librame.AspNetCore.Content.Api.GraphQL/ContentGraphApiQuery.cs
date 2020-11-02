@@ -22,7 +22,6 @@ namespace Librame.AspNetCore.Content.Api
 {
     using AspNetCore.Api;
     using AspNetCore.Content.Api.Models;
-    using AspNetCore.Content.Api.Types;
     using Extensions;
     using Extensions.Content.Accessors;
     using Extensions.Content.Builders;
@@ -88,20 +87,20 @@ namespace Librame.AspNetCore.Content.Api
 
 
         /// <summary>
-        /// 身份访问器。
-        /// </summary>
-        protected IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim> ContentAccessor { get; }
-
-        /// <summary>
         /// 构建器依赖。
         /// </summary>
         protected ContentBuilderDependency Dependency { get; }
+
+        /// <summary>
+        /// 内容访问器。
+        /// </summary>
+        protected IContentAccessor<TCategory, TSource, TClaim, TTag, TUnit, TUnitClaim, TUnitTag, TUnitVisitCount, TPane, TPaneClaim> ContentAccessor { get; }
 
 
         private void AddCategoryTypeFields()
         {
             // { pageCategories(index: 1, size: 10, search: "") { id name description createdTime createdBy [parent{...} }] }
-            Field<ListGraphType<CategoryType>>
+            Field<ListGraphType<CategoryModelType>>
             (
                 name: "pageCategories",
                 arguments: new QueryArguments(
@@ -146,7 +145,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { categories(parentId) { id name description createdTime createdBy [parent{...}] } }
-            Field<ListGraphType<CategoryType>>
+            Field<ListGraphType<CategoryModelType>>
             (
                 name: "categories",
                 arguments: new QueryArguments(
@@ -170,7 +169,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { categoryId(id: "") { id name description createdTime createdBy [parent{...}] } }
-            Field<CategoryType>
+            Field<CategoryModelType>
             (
                 name: "categoryId",
                 arguments: new QueryArguments(
@@ -189,7 +188,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { categoryName(name: "") { id name description createdTime createdBy [parent{...}] } }
-            Field<CategoryType>
+            Field<CategoryModelType>
             (
                 name: "categoryName",
                 arguments: new QueryArguments(
@@ -211,7 +210,7 @@ namespace Librame.AspNetCore.Content.Api
         private void AddSourceTypeFields()
         {
             // { pageSources(index: 1, size: 10, trace: false, search: "") { id name description website weblogo createdTime createdBy [parent{...}] } }
-            Field<ListGraphType<SourceType>>
+            Field<ListGraphType<SourceModelType>>
             (
                 name: "pageSources",
                 arguments: new QueryArguments(
@@ -246,7 +245,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { sources(parentId, trace: false) { id name description website weblogo createdTime createdBy [parent{...}] } }
-            Field<ListGraphType<SourceType>>
+            Field<ListGraphType<SourceModelType>>
             (
                 name: "sources",
                 arguments: new QueryArguments(
@@ -266,7 +265,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { sourceId(id: "", trace: false) { id name description website weblogo createdTime createdBy [parent{...}] } }
-            Field<SourceType>
+            Field<SourceModelType>
             (
                 name: "sourceId",
                 arguments: new QueryArguments(
@@ -285,7 +284,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { sourceName(name: "", trace: false) { id name description website weblogo createdTime createdBy [parent{...}] } }
-            Field<SourceType>
+            Field<SourceModelType>
             (
                 name: "sourceName",
                 arguments: new QueryArguments(
@@ -307,7 +306,7 @@ namespace Librame.AspNetCore.Content.Api
         private void AddClaimTypeFields()
         {
             // { pageClaims(index: 1, size: 10, includeCategory: false, search: "") { id name description createdTime createdBy [category{...}] } }
-            Field<ListGraphType<ClaimType>>
+            Field<ListGraphType<ClaimModelType>>
             (
                 name: "pageClaims",
                 arguments: new QueryArguments(
@@ -344,7 +343,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { claims(categoryId, includeCategory: false) { id name description createdTime createdBy [category{...}] } }
-            Field<ListGraphType<ClaimType>>
+            Field<ListGraphType<ClaimModelType>>
             (
                 name: "claims",
                 arguments: new QueryArguments(
@@ -364,7 +363,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { claimId(id: "", includeCategory: false) { id name description createdTime createdBy [category{...}] } }
-            Field<ClaimType>
+            Field<ClaimModelType>
             (
                 name: "claimId",
                 arguments: new QueryArguments(
@@ -382,7 +381,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { claimName(name: "", includeCategory: false) { id name description createdTime createdBy [category{...}] } }
-            Field<ClaimType>
+            Field<ClaimModelType>
             (
                 name: "claimName",
                 arguments: new QueryArguments(
@@ -403,7 +402,7 @@ namespace Librame.AspNetCore.Content.Api
         private void AddTagTypeFields()
         {
             // { pageTags(index: 1, size: 10, search: "") { id name createdTime createdBy } }
-            Field<ListGraphType<TagType>>
+            Field<ListGraphType<TagModelType>>
             (
                 name: "pageTags",
                 arguments: new QueryArguments(
@@ -436,7 +435,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { tagId(id: "") { id name createdTime createdBy } }
-            Field<TagType>
+            Field<TagModelType>
             (
                 name: "tagId",
                 arguments: new QueryArguments(
@@ -450,7 +449,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { tagName(name: "") { id name createdTime createdBy } }
-            Field<TagType>
+            Field<TagModelType>
             (
                 name: "tagName",
                 arguments: new QueryArguments(
@@ -467,7 +466,7 @@ namespace Librame.AspNetCore.Content.Api
         private void AddUnitTypeFields()
         {
             // { pageUnits(index: 1, size: 10, includeVisitCount: false, search: "") { id title subtitle tags reference publishedAs publishedTime publishedBy createdTime createdBy [unitVisitCount{...}] } }
-            Field<ListGraphType<UnitType>>
+            Field<ListGraphType<UnitModelType>>
             (
                 name: "pageUnits",
                 arguments: new QueryArguments(
@@ -502,7 +501,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { unitId(id: "", includeCategory: false, includeSource: false, includeVisitCount: false, includeClaims: false, includeTags: false) { id title subtitle tags reference publishedAs publishedTime publishedBy createdTime createdBy [category{...}] [source{...}] [unitVisitCount{...}] [unitClaims[{...}]] [unitTags[{...}]] } }
-            Field<UnitType>
+            Field<UnitModelType>
             (
                 name: "unitId",
                 arguments: new QueryArguments(
@@ -529,7 +528,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { unitTitle(title: "", includeCategory: false, includeSource: false, includeVisitCount: false, includeClaims: false, includeTags: false) { id title subtitle tags reference publishedAs publishedTime publishedBy createdTime createdBy [category{...}] [source{...}] [unitVisitCount{...}] [unitClaims[{...}]] [unitTags[{...}]] } }
-            Field<UnitType>
+            Field<UnitModelType>
             (
                 name: "unitTitle",
                 arguments: new QueryArguments(
@@ -559,7 +558,7 @@ namespace Librame.AspNetCore.Content.Api
         private void AddPaneTypeFields()
         {
             // { pagePanes(index: 1, size: 10, trace: false, includeClaims: false, search: "") { id name description icon more createdTime createdBy [parent{...}] [paneClaims[{...}]] } }
-            Field<ListGraphType<PaneType>>
+            Field<ListGraphType<PaneModelType>>
             (
                 name: "pagePanes",
                 arguments: new QueryArguments(
@@ -596,7 +595,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { panes(parentId, trace: false, includeClaims: false) { id name description icon more createdTime createdBy [parent{...}] [paneClaims[{...}]] } }
-            Field<ListGraphType<PaneType>>
+            Field<ListGraphType<PaneModelType>>
             (
                 name: "panes",
                 arguments: new QueryArguments(
@@ -617,7 +616,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { paneId(id: "", trace: false, includeClaims: false) { id name description icon more createdTime createdBy [parent{...}] [paneClaims[{...}]] } }
-            Field<PaneType>
+            Field<PaneModelType>
             (
                 name: "paneId",
                 arguments: new QueryArguments(
@@ -638,7 +637,7 @@ namespace Librame.AspNetCore.Content.Api
             );
 
             // { paneName(name: "", trace: false, includeClaims: false) { id name description icon more createdTime createdBy [parent{...}] [paneClaims[{...}]] } }
-            Field<PaneType>
+            Field<PaneModelType>
             (
                 name: "paneName",
                 arguments: new QueryArguments(

@@ -26,7 +26,7 @@ namespace Librame.Extensions.Portal.Stores
     /// <typeparam name="TUserId">指定的用户标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("门户编者")]
-    public class PortalEditor<TGenId, TUserId, TCreatedBy> : AbstractIdentifierEntityCreation<TGenId, TCreatedBy>
+    public class PortalEditor<TGenId, TUserId, TCreatedBy> : AbstractEntityCreation<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TUserId : IEquatable<TUserId>
         where TCreatedBy : IEquatable<TCreatedBy>

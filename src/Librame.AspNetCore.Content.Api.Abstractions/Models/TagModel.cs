@@ -12,10 +12,12 @@
 
 namespace Librame.AspNetCore.Content.Api.Models
 {
+    using AspNetCore.Api.Models;
+
     /// <summary>
     /// 标签模型。
     /// </summary>
-    public class TagModel : AbstractCreationModel
+    public class TagModel : AbstractCreationIdentifierModel
     {
         /// <summary>
         /// 名称。

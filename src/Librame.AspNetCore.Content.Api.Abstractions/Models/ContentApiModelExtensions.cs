@@ -25,6 +25,55 @@ namespace Librame.AspNetCore.Content.Api.Models
     /// </summary>
     public static class ContentApiModelExtensions
     {
+        /// <summary>
+        /// 解析生成式标识。
+        /// </summary>
+        /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+        /// <param name="id">给定的标识字符串。</param>
+        /// <returns>返回 <typeparamref name="TGenId"/>。</returns>
+        public static TGenId ParseGenId<TGenId>(this string id)
+        {
+            var targetType = typeof(TGenId);
+
+            object value = targetType.Name switch
+            {
+                "Guid" => Guid.Parse(id),
+                "String" => id,
+                "Int64" => long.Parse(id, CultureInfo.InvariantCulture),
+
+                _ => new NotSupportedException($"Unsupported generative identification type '{targetType}'")
+            };
+
+            return (TGenId)value;
+        }
+
+        /// <summary>
+        /// 解析增量式标识。
+        /// </summary>
+        /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+        /// <param name="id">给定的标识字符串。</param>
+        /// <returns>返回 <typeparamref name="TIncremId"/>。</returns>
+        public static TIncremId ParseIncremId<TIncremId>(this string id)
+        {
+            var targetType = typeof(TIncremId);
+
+            object value = targetType.Name switch
+            {
+                "SByte" => sbyte.Parse(id, CultureInfo.InvariantCulture),
+                "Byte" => byte.Parse(id, CultureInfo.InvariantCulture),
+                "Int16" => short.Parse(id, CultureInfo.InvariantCulture),
+                "UInt16" => ushort.Parse(id, CultureInfo.InvariantCulture),
+                "Int32" => int.Parse(id, CultureInfo.InvariantCulture),
+                "UInt32" => uint.Parse(id, CultureInfo.InvariantCulture),
+                "Int64" => long.Parse(id, CultureInfo.InvariantCulture),
+                "UInt64" => ulong.Parse(id, CultureInfo.InvariantCulture),
+
+                _ => new NotSupportedException($"Unsupported incremental identification type '{targetType}'")
+            };
+
+            return (TIncremId)value;
+        }
+
 
         #region Category
 
@@ -35,10 +84,11 @@ namespace Librame.AspNetCore.Content.Api.Models
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
         /// <param name="model">给定的 <see cref="CategoryModel"/>。</param>
-        /// <param name="findParentFactory">根据父级模型查找父级类别的工厂方法（可选；默认优先尝试转换父级标识）。</param>
+        /// <param name="findParentIdFactory">根据父级模型名称查找父级类别的工厂方法（可选；默认优先解析父级模型标识）。</param>
         /// <returns>返回 <typeparamref name="TCategory"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
         public static TCategory FromModel<TCategory, TIncremId, TCreatedBy>
-            (this CategoryModel model, Func<string, TCategory> findParentFactory = null)
+            (this CategoryModel model, Func<string, TIncremId> findParentIdFactory = null)
             where TCategory : ContentCategory<TIncremId, TCreatedBy>
             where TIncremId : IEquatable<TIncremId>
             where TCreatedBy : IEquatable<TCreatedBy>
@@ -47,57 +97,51 @@ namespace Librame.AspNetCore.Content.Api.Models
                 return null;
 
             var category = typeof(TCategory).EnsureCreate<TCategory>();
-
             category.Name = model.Name;
             category.Description = model.Description;
 
             if (model.Parent.IsNotNull())
-            {
-                if (model.Parent.Id.IsNotEmpty())
-                {
-                    category.ParentId = model.Parent.Id.ToIncremId<TIncremId>();
-                }
-                else
-                {
-                    var parent = findParentFactory?.Invoke(model.Parent.Name);
-                    if (parent.IsNotNull())
-                        category.ParentId = parent.Id;
-                }
-            }
+                category.ParentId = GetParentId();
 
             return category;
+
+            // 获取父标识
+            TIncremId GetParentId()
+            {
+                // 优先解析父级模型标识
+                if (model.Parent.Id.IsNotEmpty())
+                    return model.Parent.Id.ParseIncremId<TIncremId>();
+
+                findParentIdFactory.NotNull(nameof(findParentIdFactory));
+                return findParentIdFactory.Invoke(model.Parent.Name);
+            }
         }
 
         /// <summary>
         /// 转为类别模型。
         /// </summary>
-        /// <typeparam name="TCategory">指定的类别类型。</typeparam>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-        /// <param name="category">给定的 <typeparamref name="TCategory"/>。</param>
+        /// <param name="category">给定的 <see cref="ContentCategory{TIncremId, TCreatedBy}"/>。</param>
         /// <param name="findParentFactory">根据父级标识查找父级类别的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="CategoryModel"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        public static CategoryModel ToModel<TCategory, TIncremId, TCreatedBy>
-            (this TCategory category, Func<TIncremId, TCategory> findParentFactory = null)
-            where TCategory : ContentCategory<TIncremId, TCreatedBy>
+        public static CategoryModel ToModel<TIncremId, TCreatedBy>
+            (this ContentCategory<TIncremId, TCreatedBy> category,
+            Func<TIncremId, ContentCategory<TIncremId, TCreatedBy>> findParentFactory = null)
             where TIncremId : IEquatable<TIncremId>
             where TCreatedBy : IEquatable<TCreatedBy>
         {
             if (category.IsNull())
                 return null;
 
-            var model = new CategoryModel
-            {
-                Name = category.Name,
-                Description = category.Description
-            };
-            model.UpdateModel<TCategory, TIncremId, TCreatedBy>(category);
+            var model = new CategoryModel();
+            model.UpdateModel(category);
 
             if (!category.ParentId.Equals(default))
             {
                 var parent = findParentFactory?.Invoke(category.ParentId);
-                model.Parent = parent.ToModel<TCategory, TIncremId, TCreatedBy>(findParentFactory);
+                model.Parent = parent.ToModel(findParentFactory);
             }
 
             return model;
@@ -106,15 +150,13 @@ namespace Librame.AspNetCore.Content.Api.Models
         /// <summary>
         /// 更新类别模型。
         /// </summary>
-        /// <typeparam name="TCategory">指定的类别类型。</typeparam>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
         /// <param name="model">给定的 <see cref="CategoryModel"/>。</param>
-        /// <param name="category">给定的 <typeparamref name="TCategory"/>。</param>
+        /// <param name="category">给定的 <see cref="ContentCategory{TIncremId, TCreatedBy}"/>。</param>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        public static void UpdateModel<TCategory, TIncremId, TCreatedBy>
-            (this CategoryModel model, TCategory category)
-            where TCategory : ContentCategory<TIncremId, TCreatedBy>
+        public static void UpdateModel<TIncremId, TCreatedBy>
+            (this CategoryModel model, ContentCategory<TIncremId, TCreatedBy> category)
             where TIncremId : IEquatable<TIncremId>
             where TCreatedBy : IEquatable<TCreatedBy>
         {
@@ -145,6 +187,7 @@ namespace Librame.AspNetCore.Content.Api.Models
         /// <param name="model">给定的 <see cref="ClaimModel"/>。</param>
         /// <param name="findCategoryIdFactory">根据名称查找类别标识的工厂方法。</param>
         /// <returns>返回 <typeparamref name="TClaim"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
         public static TClaim FromModel<TClaim, TIncremId, TCategoryId, TCreatedBy>
             (this ClaimModel model, Func<string, TCategoryId> findCategoryIdFactory)
             where TClaim : ContentClaim<TIncremId, TCategoryId, TCreatedBy>
@@ -156,15 +199,21 @@ namespace Librame.AspNetCore.Content.Api.Models
                 return null;
 
             var claim = typeof(TClaim).EnsureCreate<TClaim>();
-
             claim.Name = model.Name;
             claim.Description = model.Description;
 
             if (model.Category.IsNotNull())
+                claim.CategoryId = GetCategoryId();
+
+            // 获取类别标识
+            TCategoryId GetCategoryId()
             {
-                var parent = findCategoryIdFactory?.Invoke(model.Category.Name);
-                if (parent.IsNotNull())
-                    parent.ParentId = parent.Id;
+                // 优先解析类别模型标识
+                if (model.Category.Id.IsNotEmpty())
+                    return model.Category.Id.ParseIncremId<TCategoryId>();
+
+                findCategoryIdFactory.NotNull(nameof(findCategoryIdFactory));
+                return findCategoryIdFactory.Invoke(model.Category.Name);
             }
 
             return claim;
@@ -177,10 +226,12 @@ namespace Librame.AspNetCore.Content.Api.Models
         /// <typeparam name="TCategoryId">指定的类别标识类型。</typeparam>
         /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
         /// <param name="claim">给定的 <see cref="ContentClaim{TIncremId, TCategoryId, TCreatedBy}"/>。</param>
+        /// <param name="findCategoryFactory">根据类别标识查找类别的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="ClaimModel"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
         public static ClaimModel ToModel<TIncremId, TCategoryId, TCreatedBy>
-            (this ContentClaim<TIncremId, TCategoryId, TCreatedBy> claim)
+            (this ContentClaim<TIncremId, TCategoryId, TCreatedBy> claim,
+            Func<TCategoryId, ContentCategory<TCategoryId, TCreatedBy>> findCategoryFactory = null)
             where TIncremId : IEquatable<TIncremId>
             where TCategoryId : IEquatable<TCategoryId>
             where TCreatedBy : IEquatable<TCreatedBy>
@@ -188,74 +239,266 @@ namespace Librame.AspNetCore.Content.Api.Models
             if (claim.IsNull())
                 return null;
 
-            return new ClaimModel
+            var model = new ClaimModel();
+            model.UpdateModel(claim);
+
+            if (!claim.CategoryId.Equals(default))
             {
-                Id = claim.Id.ToString(),
-                Name = claim.Name,
-                Description = claim.Description,
-                CreatedTime = claim.CreatedTime.ToString(CultureInfo.InvariantCulture),
-                CreatedBy = claim.CreatedBy.ToString()
-            };
+                var category = findCategoryFactory?.Invoke(claim.CategoryId);
+                model.Category = category.ToModel(findCategoryFactory);
+            }
+
+            return model;
+        }
+
+        /// <summary>
+        /// 更新声明模型。
+        /// </summary>
+        /// <typeparam name="TIncremId">指定的声明增量式标识类型。</typeparam>
+        /// <typeparam name="TCategoryId">指定的类别标识类型。</typeparam>
+        /// <typeparam name="TCreatedBy">指定的创建者声明。</typeparam>
+        /// <param name="model">给定的 <see cref="ClaimModel"/>。</param>
+        /// <param name="claim">给定的 <see cref="ContentClaim{TIncremId, TCategoryId, TCreatedBy}"/>。</param>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static void UpdateModel<TIncremId, TCategoryId, TCreatedBy>
+            (this ClaimModel model, ContentClaim<TIncremId, TCategoryId, TCreatedBy> claim)
+            where TIncremId : IEquatable<TIncremId>
+            where TCategoryId : IEquatable<TCategoryId>
+            where TCreatedBy : IEquatable<TCreatedBy>
+        {
+            model.NotNull(nameof(model));
+            claim.NotNull(nameof(claim));
+
+            if (model.Name != claim.Name)
+                model.Name = claim.Name;
+
+            if (model.Description != claim.Description)
+                model.Description = claim.Description;
+
+            model.Populate(claim);
         }
 
         #endregion
 
 
+        #region Pane
+
         /// <summary>
-        /// 将窗格转为窗格模型。
+        /// 来自窗格模型。
+        /// </summary>
+        /// <typeparam name="TPane">指定的窗格类型。</typeparam>
+        /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+        /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+        /// <param name="model">给定的 <see cref="PaneModel"/>。</param>
+        /// <param name="findParentIdFactory">根据父级模型名称查找父级窗格的工厂方法（可选；默认优先解析父级模型标识）。</param>
+        /// <returns>返回 <typeparamref name="TPane"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static TPane FromModel<TPane, TIncremId, TCreatedBy>
+            (this PaneModel model, Func<string, TIncremId> findParentIdFactory = null)
+            where TPane : ContentPane<TIncremId, TCreatedBy>
+            where TIncremId : IEquatable<TIncremId>
+            where TCreatedBy : IEquatable<TCreatedBy>
+        {
+            if (model.IsNull())
+                return null;
+
+            var pane = typeof(TPane).EnsureCreate<TPane>();
+            pane.Name = model.Name;
+            pane.Description = model.Description;
+
+            if (model.Parent.IsNotNull())
+                pane.ParentId = GetParentId();
+
+            return pane;
+
+            // 获取父标识
+            TIncremId GetParentId()
+            {
+                // 优先解析父级模型标识
+                if (model.Parent.Id.IsNotEmpty())
+                    return model.Parent.Id.ParseIncremId<TIncremId>();
+
+                findParentIdFactory.NotNull(nameof(findParentIdFactory));
+                return findParentIdFactory.Invoke(model.Parent.Name);
+            }
+        }
+
+        /// <summary>
+        /// 转为窗格模型。
         /// </summary>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
         /// <param name="pane">给定的 <see cref="ContentPane{TIncremId, TCreatedBy}"/>。</param>
+        /// <param name="findParentFactory">根据父级标识查找父级窗格的工厂方法（可选）。</param>
+        /// <param name="paneClaims">给定的 <see cref="IReadOnlyList{PaneClaimModel}"/>（可选）。</param>
         /// <returns>返回 <see cref="PaneModel"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
         public static PaneModel ToModel<TIncremId, TCreatedBy>
-            (this ContentPane<TIncremId, TCreatedBy> pane)
+            (this ContentPane<TIncremId, TCreatedBy> pane,
+            Func<TIncremId, ContentPane<TIncremId, TCreatedBy>> findParentFactory = null,
+            IReadOnlyList<PaneClaimModel> paneClaims = null)
             where TIncremId : IEquatable<TIncremId>
             where TCreatedBy : IEquatable<TCreatedBy>
         {
             if (pane.IsNull())
                 return null;
 
-            return new PaneModel
+            var model = new PaneModel();
+            model.UpdateModel(pane, paneClaims);
+
+            if (!pane.ParentId.Equals(default))
             {
-                Id = pane.Id.ToString(),
-                Name = pane.Name,
-                Description = pane.Description,
-                Icon = pane.Icon,
-                More = pane.More,
-                CreatedTime = pane.CreatedTime.ToString(CultureInfo.InvariantCulture),
-                CreatedBy = pane.CreatedBy.ToString()
-            };
+                var parent = findParentFactory?.Invoke(pane.ParentId);
+                model.Parent = parent.ToModel(findParentFactory);
+            }
+
+            return model;
         }
 
         /// <summary>
-        /// 将来源转为来源模型。
+        /// 更新窗格模型。
+        /// </summary>
+        /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+        /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+        /// <param name="model">给定的 <see cref="PaneModel"/>。</param>
+        /// <param name="pane">给定的 <see cref="ContentPane{TIncremId, TCreatedBy}"/>。</param>
+        /// <param name="paneClaims">给定的 <see cref="IReadOnlyList{PaneClaimModel}"/>（可选）。</param>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static void UpdateModel<TIncremId, TCreatedBy>
+            (this PaneModel model, ContentPane<TIncremId, TCreatedBy> pane,
+            IReadOnlyList<PaneClaimModel> paneClaims = null)
+            where TIncremId : IEquatable<TIncremId>
+            where TCreatedBy : IEquatable<TCreatedBy>
+        {
+            model.NotNull(nameof(model));
+            pane.NotNull(nameof(pane));
+
+            if (model.Name != pane.Name)
+                model.Name = pane.Name;
+
+            if (model.Description != pane.Description)
+                model.Description = pane.Description;
+
+            if (model.Icon != pane.Icon)
+                model.Icon = pane.Icon;
+
+            if (model.More != pane.More)
+                model.More = pane.More;
+
+            if (paneClaims.IsNotNull())
+                model.PaneClaims = paneClaims;
+
+            model.Populate(pane);
+        }
+
+        #endregion
+
+
+        #region Source
+
+        /// <summary>
+        /// 来自来源模型。
+        /// </summary>
+        /// <typeparam name="TSource">指定的来源类型。</typeparam>
+        /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+        /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+        /// <param name="model">给定的 <see cref="SourceModel"/>。</param>
+        /// <param name="findParentIdFactory">根据父级模型名称查找父级来源的工厂方法（可选；默认优先解析父级模型标识）。</param>
+        /// <returns>返回 <typeparamref name="TSource"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static TSource FromModel<TSource, TIncremId, TCreatedBy>
+            (this SourceModel model, Func<string, TIncremId> findParentIdFactory = null)
+            where TSource : ContentSource<TIncremId, TCreatedBy>
+            where TIncremId : IEquatable<TIncremId>
+            where TCreatedBy : IEquatable<TCreatedBy>
+        {
+            if (model.IsNull())
+                return null;
+
+            var source = typeof(TSource).EnsureCreate<TSource>();
+            source.Name = model.Name;
+            source.Description = model.Description;
+
+            if (model.Parent.IsNotNull())
+                source.ParentId = GetParentId();
+
+            return source;
+
+            // 获取父标识
+            TIncremId GetParentId()
+            {
+                // 优先解析父级模型标识
+                if (model.Parent.Id.IsNotEmpty())
+                    return model.Parent.Id.ParseIncremId<TIncremId>();
+
+                findParentIdFactory.NotNull(nameof(findParentIdFactory));
+                return findParentIdFactory.Invoke(model.Parent.Name);
+            }
+        }
+
+        /// <summary>
+        /// 转为来源模型。
         /// </summary>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
         /// <param name="source">给定的 <see cref="ContentSource{TIncremId, TCreatedBy}"/>。</param>
+        /// <param name="findParentFactory">根据父级标识查找父级来源的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="SourceModel"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
         public static SourceModel ToModel<TIncremId, TCreatedBy>
-            (this ContentSource<TIncremId, TCreatedBy> source)
+            (this ContentSource<TIncremId, TCreatedBy> source,
+            Func<TIncremId, ContentSource<TIncremId, TCreatedBy>> findParentFactory = null)
             where TIncremId : IEquatable<TIncremId>
             where TCreatedBy : IEquatable<TCreatedBy>
         {
             if (source.IsNull())
                 return null;
 
-            return new SourceModel
+            var model = new SourceModel();
+            model.UpdateModel(source);
+
+            if (!source.ParentId.Equals(default))
             {
-                Id = source.Id.ToString(),
-                Name = source.Name,
-                Description = source.Description,
-                Website = source.Website,
-                Weblogo = source.Weblogo,
-                CreatedTime = source.CreatedTime.ToString(CultureInfo.InvariantCulture),
-                CreatedBy = source.CreatedBy.ToString()
-            };
+                var parent = findParentFactory?.Invoke(source.ParentId);
+                model.Parent = parent.ToModel(findParentFactory);
+            }
+
+            return model;
         }
+
+        /// <summary>
+        /// 更新来源模型。
+        /// </summary>
+        /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+        /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+        /// <param name="model">给定的 <see cref="SourceModel"/>。</param>
+        /// <param name="source">给定的 <see cref="ContentSource{TIncremId, TCreatedBy}"/>。</param>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static void UpdateModel<TIncremId, TCreatedBy>
+            (this SourceModel model, ContentSource<TIncremId, TCreatedBy> source)
+            where TIncremId : IEquatable<TIncremId>
+            where TCreatedBy : IEquatable<TCreatedBy>
+        {
+            model.NotNull(nameof(model));
+            source.NotNull(nameof(source));
+
+            if (model.Name != source.Name)
+                model.Name = source.Name;
+
+            if (model.Description != source.Description)
+                model.Description = source.Description;
+
+            if (model.Website != source.Website)
+                model.Website = source.Website;
+
+            if (model.Weblogo != source.Weblogo)
+                model.Weblogo = source.Weblogo;
+
+            model.Populate(source);
+        }
+
+        #endregion
+
 
         /// <summary>
         /// 将标签转为标签模型。

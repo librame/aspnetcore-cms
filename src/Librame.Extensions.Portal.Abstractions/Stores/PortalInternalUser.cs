@@ -25,7 +25,7 @@ namespace Librame.Extensions.Portal.Stores
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("门户内置用户")]
-    public class PortalInternalUser<TGenId, TCreatedBy> : AbstractIdentifierEntityCreation<TGenId, TCreatedBy>
+    public class PortalInternalUser<TGenId, TCreatedBy> : AbstractEntityCreation<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {

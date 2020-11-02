@@ -30,7 +30,7 @@ namespace Librame.Extensions.Content.Stores
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("窗格")]
-    public class ContentPane<TIncremId, TCreatedBy> : AbstractIdentifierEntityCreation<TIncremId, TCreatedBy>,
+    public class ContentPane<TIncremId, TCreatedBy> : AbstractEntityCreation<TIncremId, TCreatedBy>,
         IParentIdentifier<TIncremId>
         where TIncremId : IEquatable<TIncremId>
         where TCreatedBy : IEquatable<TCreatedBy>

@@ -14,10 +14,12 @@ using System.Collections.Generic;
 
 namespace Librame.AspNetCore.Content.Api.Models
 {
+    using AspNetCore.Api.Models;
+
     /// <summary>
     /// 窗格模型。
     /// </summary>
-    public class PaneModel : AbstractCreationModel
+    public class PaneModel : AbstractCreationIdentifierModel
     {
         /// <summary>
         /// 名称。

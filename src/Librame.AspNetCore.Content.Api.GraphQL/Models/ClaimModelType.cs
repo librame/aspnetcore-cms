@@ -10,26 +10,25 @@
 
 #endregion
 
-namespace Librame.AspNetCore.Content.Api.Types
+namespace Librame.AspNetCore.Content.Api.Models
 {
-    using AspNetCore.Api.Types;
-    using AspNetCore.Content.Api.Models;
+    using AspNetCore.Api.Models;
 
     /// <summary>
-    /// 登入输入类型。
+    /// 声明模型类型。
     /// </summary>
-    public class CategoryInputType : ApiInputTypeBase<CategoryModel>
+    public class ClaimModelType : CreationIdentifierModelTypeBase<ClaimModel>
     {
         /// <summary>
-        /// 构造一个 <see cref="CategoryInputType"/>。
+        /// 构造一个 <see cref="ClaimModelType"/>。
         /// </summary>
-        public CategoryInputType()
+        public ClaimModelType()
             : base()
         {
             Field(f => f.Name);
             Field(f => f.Description);
 
-            Field(f => f.Parent, nullable: true);
+            Field(f => f.Category, type: typeof(CategoryModelType), nullable: true);
         }
 
     }
